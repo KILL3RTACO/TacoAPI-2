@@ -42,7 +42,7 @@ public class ChatObject {
 	}
 	
 	public void sendPlayerMessage(Player player, String message){
-		message = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f" + message);
+		message = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f " + message);
 		player.sendMessage(message);
 	}
 	
@@ -52,7 +52,7 @@ public class ChatObject {
 	}
 	
 	public void sendPlayerMessage(Player player, TacoMessage message){
-		String msg = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f" + message.getMessage());
+		String msg = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f " + message.getMessage());
 		player.sendMessage(msg);
 	}
 	
@@ -62,7 +62,7 @@ public class ChatObject {
 	}
 	
 	public void sendGlobalMessage(String message){
-		message = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f" + message);
+		message = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f " + message);
 		TacoAPI.plugin.getServer().broadcastMessage(message);
 	}
 	
@@ -71,7 +71,7 @@ public class ChatObject {
 	}
 	
 	public void sendGlobalMessage(TacoMessage message){
-		String msg = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f" + message.getMessage());
+		String msg = TacoAPI.getChatUtils().formatMessage("&7[&9" + name + "&7]&f " + message.getMessage());
 		TacoAPI.plugin.getServer().broadcastMessage(msg);
 	}
 	
@@ -81,17 +81,17 @@ public class ChatObject {
 	
 	public void out(String message){
 		Logger logger = Logger.getLogger("Minecraft");
-		logger.log(Level.INFO, message);
+		logger.log(Level.INFO, "[" + name + "] " + message);
 	}
 	
 	public void outSevere(String message){
 		Logger logger = Logger.getLogger("Minecraft");
-		logger.log(Level.SEVERE, message);
+		logger.log(Level.SEVERE, "[" + name + "] " + message);
 	}
 	
 	public void outWarn(String message){
 		Logger logger = Logger.getLogger("Minecraft");
-		logger.log(Level.WARNING, message);
+		logger.log(Level.WARNING, "[" + name + "] " + message);
 	}
 
 }

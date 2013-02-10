@@ -130,4 +130,19 @@ public class ChatUtils {
 	    return removeArgs(array, 1);
 	}
 	
+	/**
+	 * Converts a String to ProperCase.
+	 * @param s the String tto be converted
+	 * @return the converted String
+	 */
+	public String toProperCase(String s){
+		String result = "";
+		for(String str : s.split(" ")){
+			String newStr = (str.charAt(0) + "").toUpperCase();
+			if(str.length() > 1) newStr += str.substring(1).toLowerCase();
+			result += newStr + " ";
+		}
+		return result.substring(0, result.length() - 1);
+	}
+	
 }

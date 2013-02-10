@@ -2,7 +2,6 @@ package taco.tacoapi.util;
 
 import java.util.ArrayList;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,10 +17,12 @@ public class PageBuilder {
 	private ArrayList<String> elements;
 	private int pages = 0, elementsPerPage = 5;
 	private String title;
-	private ChatColor titleContainer = ChatColor.WHITE;
+	private String titleContainer = "&f";
 	
-	public PageBuilder() {
+	public PageBuilder(String title, String titleContainerColor) {
 		elements = new ArrayList<String>();
+		this.title = title;
+		this.titleContainer = titleContainerColor;
 	}
 	
 	/**
@@ -70,8 +71,9 @@ public class PageBuilder {
 	public void showPage(Player player, int page){
 		if(!hasPage(page)) page = 1;
 		int start = elementsPerPage * (page - 1);
-		TacoAPI.getChatAPI().sendPlayerMessageNoHeader(player, titleContainer + "====[&f" + title + titleContainer + "]====");
+		TacoAPI.getChatAPI().sendPlayerMessageNoHeader(player, titleContainer + "====[&f" + title + " Page " + page + "/" + pages + titleContainer + "]====");
 		for(int i=start; i<start+elementsPerPage; i++){
+			if(i + 1 > elements.size()) break;
 			TacoAPI.getChatAPI().sendPlayerMessageNoHeader(player, elements.get(i));
 		}
 	}
@@ -83,18 +85,14 @@ public class PageBuilder {
 		}
 		if(!hasPage(page)) page = 1;
 		int start = elementsPerPage * (page - 1);
-		TacoAPI.getChatAPI().out(titleContainer + "====[&f" + title + titleContainer + "]====");
+		TacoAPI.getChatAPI().out("====[" + title + "]====");
 		for(int i=start; i<start+elementsPerPage; i++){
+			if(i + 1 > elements.size()) break;
 			TacoAPI.getChatAPI().out(elements.get(i));
 		}
 	}
 	
-	public void setTitleContainerColor(char color){
-		if(ChatColor.getByChar(color) == null) setTitleContainerColor(ChatColor.getByChar(color));
-		else setTitleContainerColor(ChatColor.WHITE);
-	}
-	
-	public void setTitleContainerColor(ChatColor color){
+	public void setTitleContainerColor(String color){
 		titleContainer = color;
 	}
 

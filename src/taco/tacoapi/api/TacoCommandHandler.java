@@ -25,6 +25,7 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	private ArrayList<TacoCommand> commands;
 	
 	public TacoCommandHandler(String cmdName, String description, String permission){
+		this.commands = new ArrayList<TacoCommand>();
 		this.cmdName = cmdName;
 		this.description = description;
 		this.permission = permission;
@@ -38,10 +39,8 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	
 	private void showHelp(Player player, int page){
 		Collections.sort(commands);
-		PageBuilder help = new PageBuilder();
-		help.setTitle(cmdName + " Help");
-		help.setTitleContainerColor('6');
-		help.append("&b/" + cmdName + "&7: " + description);
+		PageBuilder help = new PageBuilder("&b" + TacoAPI.getChatUtils().toProperCase(cmdName) + " Help", "&3");
+		help.append("&b/" + cmdName + "&7: &b" + description);
 		help.append("&b/" + cmdName + " &3<help/?> [page]&7: &bShows help");
 		for(TacoCommand tc : commands){
 			if(player.hasPermission(tc.getPermission())) help.append("&b/" + cmdName + " &3" + tc.getName() + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
@@ -55,9 +54,7 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 			return;
 		}
 		Collections.sort(commands);
-		PageBuilder help = new PageBuilder();
-		help.setTitle(cmdName + " Help");
-		help.setTitleContainerColor('6');
+		PageBuilder help = new PageBuilder(TacoAPI.getChatUtils().toProperCase(cmdName), "");
 		help.append("/" + cmdName + ": " + description);
 		help.append("/" + cmdName + " <help/?> [page]: Shows help");
 		for(TacoCommand tc : commands){
@@ -126,7 +123,7 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	}
 	
 	/**
-	 * Gets the name of this object.
+	 * Gets the name of this command.
 	 * @return The name of this {@link TacoCommandHandler TacoCommandHandler}
 	 */
 	public String getName(){

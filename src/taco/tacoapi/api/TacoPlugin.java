@@ -3,6 +3,7 @@ package taco.tacoapi.api;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import taco.tacoapi.api.metrics.Metrics;
@@ -37,6 +38,14 @@ public abstract class TacoPlugin extends JavaPlugin {
 		} catch (IOException e) {
 			chat.out("Could not start PluginMetrics");
 		}
+	}
+	
+	public void registerCommand(TacoCommandHandler handler){
+		getCommand(handler.getName()).setExecutor(handler);
+	}
+	
+	public void registerEvents(Listener l){
+		getServer().getPluginManager().registerEvents(l, this);
 	}
 	
 	public int registerDelayedTask(Runnable task, long delay){

@@ -31,10 +31,8 @@ public abstract class TacoCommand implements Comparable<TacoCommand> {
 	 * with any {@link TacoCommandHandler} with an alias of "*".
 	 * @param player The player that typed the command
 	 * @param args The arguments of the command
-	 * @return {@code false} by default, if false is returned the player will be given.
-	 * an {@code {@link InvalidPermissionsMessage InvalidPermissionsMessage}}
 	 */
-	public abstract boolean onPlayerCommand(Player player, String[] args);
+	public abstract void onPlayerCommand(Player player, String[] args);
 	
 	/**
 	 * This method is called when someone using the console runs this command (automatic).
@@ -100,7 +98,7 @@ public abstract class TacoCommand implements Comparable<TacoCommand> {
 	 * @return whether or not the command can be run using the alias given
 	 */
 	public boolean hasAlias(String alias){
-		if(name.equals(alias)) return true;
+		if(name.equalsIgnoreCase(alias)) return true;
 		for(String s : aliases)
 			if(s.equalsIgnoreCase(alias)) return true;
 		return false;

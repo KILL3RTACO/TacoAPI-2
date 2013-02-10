@@ -2,3 +2,6 @@ name: TacoAPI
 main: taco.tacoapi.TacoAPI
 description: API inspired by DeityAPI
 version: 2.0.1
+load: startup
+authors: [KILL3RTACO]
+softdepend: [WorldEdit]
