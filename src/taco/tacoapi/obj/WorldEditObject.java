@@ -23,7 +23,7 @@ import com.sk89q.worldedit.schematic.SchematicFormat;
 
 public class WorldEditObject {
 	
-	private static WorldEditPlugin we;
+	private WorldEditPlugin we;
 	
 	public WorldEditObject(WorldEditPlugin worldEdit){
 		we = worldEdit;

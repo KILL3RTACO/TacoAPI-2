@@ -43,7 +43,8 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 		help.append("&b/" + cmdName + "&7: &b" + description);
 		help.append("&b/" + cmdName + " &3<help/?> [page]&7: &bShows help");
 		for(TacoCommand tc : commands){
-			if(player.hasPermission(tc.getPermission())) help.append("&b/" + cmdName + " &3" + tc.getName() + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
+			if(permission == null || player.hasPermission(tc.getPermission()) || permission.equalsIgnoreCase(""))
+				help.append("&b/" + cmdName + " &3" + tc.getName() + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
 		}
 		help.showPage(player, page);
 	}
@@ -77,7 +78,7 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(args.length == 0){
 			if(sender instanceof Player){
-				if(((Player) sender).hasPermission(permission))
+				if(permission == null || ((Player) sender).hasPermission(permission) || permission.equalsIgnoreCase(""))
 					onPlayerCommand((Player) sender);
 				else
 					TacoAPI.getChatAPI().sendInvalidPermissionsMessage((Player) sender);
@@ -105,7 +106,7 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 				if(sender instanceof Player){
 					Player player = (Player) sender;
 					if(tc != null){
-						if(player.hasPermission(tc.getPermission())) tc.onPlayerCommand(player, args);
+						if(permission == null || player.hasPermission(tc.getPermission()) || permission.equalsIgnoreCase("")) tc.onPlayerCommand(player, args);
 						else TacoAPI.getChatAPI().sendInvalidPermissionsMessage(player);
 					}else{
 						TacoAPI.getChatAPI().sendInvalidSubCommandMessage((Player) sender, subcommand);

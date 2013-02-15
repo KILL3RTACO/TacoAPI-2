@@ -30,7 +30,13 @@ public class TacoAPI extends TacoPlugin {
 			getChatAPI().outSevere("Could not hook into MySQL. Did you update the config.yml?");
 		}
 		try {
-			we = new WorldEditObject(new WorldEditPlugin());
+			WorldEditPlugin wePlugin = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
+			if(wePlugin == null){
+				chat.outWarn("WorldEdit not found");
+			}else{
+				we = new WorldEditObject(wePlugin);
+				chat.out("WorldEdit API online");
+			}
 		} catch (NoClassDefFoundError e) {
 			chat.outWarn("WorlEditAPI not loaded");
 		}
