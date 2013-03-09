@@ -2,13 +2,31 @@ package taco.tacoapi.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class QueryResults {
 
-	private ResultSet set;
+	private ArrayList<String> columns;
+	private ArrayList<ArrayList<Object>> values;
 	
 	public QueryResults(ResultSet set) {
-		this.set = set;
+		columns = new ArrayList<String>();
+		values = new ArrayList<ArrayList<Object>>();
+		try{
+			for(int i=1; i<=set.getMetaData().getColumnCount(); i++){
+				columns.add(set.getMetaData().getColumnName(i));
+			}
+			while(set.next()){
+				ArrayList<Object> row  = new ArrayList<Object>();
+				for(String column : columns){
+					row.add(set.getObject(column));
+				}
+				values.add(row);
+			}
+		} catch(SQLException e){
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -16,14 +34,15 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the boolean found
-	 * @throws SQLException
+	 * @throws DatabaseException
 	 */
-	public boolean getBoolean(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public boolean getBoolean(int index, String columnName) throws DatabaseException {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Boolean){
+			return (boolean) obj;
+		}else{
+			return false;
 		}
-		return set.getBoolean(columnName);
 	}
 
 	/**
@@ -31,14 +50,15 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the double found
-	 * @throws SQLException
+	 * @throws DatabaseException
 	 */
-	public double getDouble(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public double getDouble(int index, String columnName) throws DatabaseException {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Double){
+			return (double) obj;
+		}else{
+			return 0D;
 		}
-		return set.getDouble(columnName);
 	}
 	
 	/**
@@ -46,14 +66,15 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the float found
-	 * @throws SQLException
+	 * @throws DatabaseException
 	 */
-	public float getFloat(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public float getFloat(int index, String columnName) throws DatabaseException{
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Float){
+			return (float) obj;
+		}else{
+			return 0F;
 		}
-		return set.getFloat(columnName);
 	}
 	
 	/**
@@ -61,14 +82,15 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the int found
-	 * @throws SQLException
+	 * @throws DatabaseException 
 	 */
-	public int getInteger(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public int getInteger(int index, String columnName) throws DatabaseException {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Integer){
+			return (int) obj;
+		}else{
+			return 0;
 		}
-		return set.getInt(columnName);
 	}
 	
 	/**
@@ -76,14 +98,36 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the long found
-	 * @throws SQLException
+	 * @throws DatabaseException 
 	 */
-	public long getLong(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public long getLong(int index, String columnName) throws DatabaseException  {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Double){
+			return (long) obj;
+		}else{
+			return 0L;
 		}
-		return set.getLong(columnName);
+	}
+	
+	/**
+	 * Gets an Object from the query.
+	 * @param index the row
+	 * @param columnName the column
+	 * @return the Object found
+	 * @throws DatabaseException 
+	 */
+	public Object getObject(int index, String columnName) throws DatabaseException {
+		int rows = rowCount();
+		if(index > rows - 1) throw new DatabaseException(index + " > (rowCount() - 1), which is " + rows);
+		int columnIndex = -1;
+		for(int i=0; i<columns.size(); i++){
+			if(columns.get(i).equalsIgnoreCase(columnName)){
+				columnIndex = i;
+				break;
+			}
+		}
+		if(columnIndex == -1) throw new DatabaseException("Column with the name of '" + columnName + "' not found");
+		return values.get(index).get(columnIndex);
 	}
 	
 	/**
@@ -91,14 +135,15 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the short found
-	 * @throws SQLException
+	 * @throws DatabaseException 
 	 */
-	public short getShort(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public short getShort(int index, String columnName) throws DatabaseException {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Short){
+			return (short) obj;
+		}else{
+			return 0;
 		}
-		return set.getShort(columnName);
 	}
 	
 	/**
@@ -106,14 +151,31 @@ public class QueryResults {
 	 * @param index the row
 	 * @param columnName the column
 	 * @return the String found
-	 * @throws SQLException
+	 * @throws DatabaseException 
 	 */
-	public String getString(int index, String columnName) throws SQLException {
-		set.first();
-		for(int i=0; i<index; i++){
-			set.next();
+	public String getString(int index, String columnName) throws DatabaseException {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof String){
+			return (String) obj;
+		}else{
+			return null;
 		}
-		return set.getString(columnName);
+	}
+	
+	/**
+	 * Gets a Timestamp from the query.
+	 * @param index the row
+	 * @param columnName the column
+	 * @return the String found
+	 * @throws DatabaseException
+	 */
+	public Timestamp getTimestamp(int index, String columnName) throws DatabaseException {
+		Object obj = getObject(index, columnName);
+		if(obj instanceof Timestamp){
+			return (Timestamp) obj;
+		}else{
+			return null;
+		}
 	}
 	
 	/**
@@ -129,13 +191,7 @@ public class QueryResults {
 	 * @return the amount of rows 
 	 */
 	public int rowCount(){
-		int rows = 0;
-		try {
-			set.first();
-			while(set.next()) rows++;
-		} catch (SQLException e) {}
-		return rows;
-		
+		return values.size();
 	}
 
 }

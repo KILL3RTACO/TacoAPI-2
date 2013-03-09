@@ -11,6 +11,7 @@ import taco.tacoapi.obj.ChatObject;
 import taco.tacoapi.obj.PlayerObject;
 import taco.tacoapi.obj.WorldEditObject;
 import taco.tacoapi.util.ChatUtils;
+import taco.tacoapi.util.ItemUtils;
 
 public class TacoAPI extends TacoPlugin {
 	
@@ -47,20 +48,24 @@ public class TacoAPI extends TacoPlugin {
 		
 	}
 	
-	public static ChatUtils getChatUtils(){
-		return new ChatUtils();
-	}
-	
 	public static ChatObject getChatAPI(){
 		return new ChatObject("TacoAPI");
 	}
 	
-	public static PlayerObject getPlayerAPI(){
-		return new PlayerObject();
+	public static ChatUtils getChatUtils(){
+		return new ChatUtils();
 	}
 	
 	public static Database getDB(){
 		return data;
+	}
+	
+	public static ItemUtils getItemUtils(){
+		return new ItemUtils();
+	}
+	
+	public static PlayerObject getPlayerAPI(){
+		return new PlayerObject();
 	}
 	
 	public static WorldEditObject getWorldEditAPI(){

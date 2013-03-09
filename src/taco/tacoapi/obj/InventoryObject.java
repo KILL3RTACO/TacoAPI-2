@@ -1,6 +1,7 @@
 package taco.tacoapi.obj;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,7 +18,9 @@ public class InventoryObject {
 		for(ItemStack i : player.getInventory()){
 			if(i == null){
 				space += items.getMaxStackSize();
-			}else if(i.getType() == items.getType() && i.getDurability() == items.getDurability()){
+			}else if(i.getType() == items.getType() && i.getDurability() == items.getDurability() && 
+					(i.getItemMeta().hasDisplayName() ? i.getItemMeta().getDisplayName()
+							.equalsIgnoreCase(items.getItemMeta().getDisplayName()) : true)){
 				space += items.getMaxStackSize() - i.getAmount();
 			}
 		}
@@ -55,7 +58,19 @@ public class InventoryObject {
 		for(ItemStack i : player.getInventory()){
 			if(i != null){
 				if(i.getType() == items.getType() && i.getDurability() == items.getDurability()){
-					amount += i.getAmount();
+					boolean hasEnchants = true;
+					for(Enchantment e : i.getEnchantments().keySet()){
+						if(items.getItemMeta().hasEnchant(e)){
+							if(i.getEnchantmentLevel(e) != items.getEnchantmentLevel(e)){
+								hasEnchants = false;
+								break;
+							}
+						}else{
+							hasEnchants = false;
+							break;
+						}
+					}
+					if(hasEnchants) amount += i.getAmount();
 				}
 			}
 		}

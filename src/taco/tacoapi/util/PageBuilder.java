@@ -38,6 +38,10 @@ public class PageBuilder {
 		pages = elements.size() / elementsPerPage + (elements.size() % elementsPerPage != 0 ? 1 : 0);
 	}
 	
+	public int getElementsPerPage(){
+		return elementsPerPage;
+	}
+	
 	/**
 	 * Tests if there are no pages.
 	 * @return true if there are no pages
@@ -90,6 +94,10 @@ public class PageBuilder {
 			if(i + 1 > elements.size()) break;
 			TacoAPI.getChatAPI().out(elements.get(i));
 		}
+	}
+	
+	public void setElementsPerPage(int elements){
+		elementsPerPage = elements;
 	}
 	
 	public void setTitleContainerColor(String color){

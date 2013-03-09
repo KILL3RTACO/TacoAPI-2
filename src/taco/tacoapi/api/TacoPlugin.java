@@ -12,10 +12,10 @@ import taco.tacoapi.obj.ChatObject;
 public abstract class TacoPlugin extends JavaPlugin {
 
 	private ArrayList<Integer> tasks = new ArrayList<Integer>();
-	public static ChatObject chat;
+	public ChatObject chat;
 	
 	public void onEnable(){
-		chat = new ChatObject(getDescription().getName());
+		chat = new ChatObject(super.getDescription().getName());
 		onStart();
 	}
 	

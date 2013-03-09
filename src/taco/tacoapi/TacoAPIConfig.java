@@ -13,7 +13,7 @@ public class TacoAPIConfig extends TacoConfig {
 	@Override
 	protected void setDefaults() {
 		addDefaultValue("mysql.server.address", "localhost");
-		addDefaultValue("mysql.server.port", 3000);
+		addDefaultValue("mysql.server.port", 3306);
 		addDefaultValue("mysql.database.name", "minecraft");
 		addDefaultValue("mysql.database.username", "root");
 		addDefaultValue("mysql.database.password", "root");

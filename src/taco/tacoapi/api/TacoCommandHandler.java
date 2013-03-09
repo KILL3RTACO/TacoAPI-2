@@ -88,7 +88,9 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 				}
 			}
 		}else{
-			if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
+			if(wildcardCommandExists()){
+				runCommand(sender, args);
+			}else if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
 				if(args.length == 1){ // "help"
 					showHelp(sender, 1);
 				}else{ // "help [page]"
@@ -100,27 +102,40 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 					}
 				}
 			}else{
-				String subcommand = args[0];
-				TacoCommand tc = getCommandByAlias(subcommand);
-				args = TacoAPI.getChatUtils().removeFirstArg(args);
-				if(sender instanceof Player){
-					Player player = (Player) sender;
-					if(tc != null){
-						if(permission == null || player.hasPermission(tc.getPermission()) || permission.equalsIgnoreCase("")) tc.onPlayerCommand(player, args);
-						else TacoAPI.getChatAPI().sendInvalidPermissionsMessage(player);
-					}else{
-						TacoAPI.getChatAPI().sendInvalidSubCommandMessage((Player) sender, subcommand);
-					}
-				}else{
-					if(tc != null){
-						tc.onConsoleCommand(args);
-					}else{
-						TacoAPI.getChatAPI().sendInvalidSubCommandMessage(sender, subcommand);
-					}
-				}
+				runCommand(sender, args);
 			}
 		}
 		return true;
+	}
+	
+	private void runCommand(CommandSender sender, String[] args){
+		String subcommand = args[0];
+		TacoCommand tc = getCommandByAlias(subcommand);
+		args = TacoAPI.getChatUtils().removeFirstArg(args);
+		if(sender instanceof Player){
+			Player player = (Player) sender;
+			if(tc != null){
+				if(permission == null || player.hasPermission(tc.getPermission()) || permission.equalsIgnoreCase("")) tc.onPlayerCommand(player, args);
+				else TacoAPI.getChatAPI().sendInvalidPermissionsMessage(player);
+			}else{
+				TacoAPI.getChatAPI().sendInvalidSubCommandMessage((Player) sender, subcommand);
+			}
+		}else{
+			if(tc != null){
+				if(!tc.onConsoleCommand(args)){
+					TacoAPI.getChatAPI().out("This command must be run by a player");
+				}
+			}else{
+				TacoAPI.getChatAPI().sendInvalidSubCommandMessage(sender, subcommand);
+			}
+		}
+	}
+	
+	private boolean wildcardCommandExists(){
+		for(TacoCommand tc : commands){
+			if(tc.hasAlias("*")) return true;
+		}
+		return false;
 	}
 	
 	/**

@@ -90,12 +90,16 @@ public class Database {
 			if(rs != null){
 				try {
 					rs.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 			if(stmt != null){
 				try {
 					stmt.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return results;

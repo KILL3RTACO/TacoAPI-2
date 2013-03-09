@@ -1,5 +1,11 @@
 package taco.tacoapi.util;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Random;
+
 import org.bukkit.ChatColor;
 
 /**
@@ -36,17 +42,21 @@ public class ChatUtils {
 	private final String codes = "0123456789abcdefklmnor";
 	
 	/**
-	 * Creates a header that can put at the top of a message block. The raw String of this header will look like:
-	 * <code>
-	 * <pre>
-	 *   &6=====[{RAW_TITLE}&6]=====
-	 * </pre>
-	 * </code>
+	 * Creates a header with a default border color of &6
 	 * @param title - The title of the header
 	 * @return A formatted header
 	 */
 	public String createHeader(String title){
-		return formatMessage("&6=====["+ title + "&6]=====");
+		return createHeader('6', title);
+	}
+	
+	/**
+	 * Creates a header with a specified border color
+	 * @param title - The title of the header
+	 * @return A formatted header
+	 */
+	public String createHeader(char borderColor, String title){
+		return formatMessage("&" + borderColor + "=====[&f"+ title + "&" + borderColor + "]=====");
 	}
 	
 	/**
@@ -143,6 +153,24 @@ public class ChatUtils {
 			result += newStr + " ";
 		}
 		return result.substring(0, result.length() - 1);
+	}
+	
+	public <E> E getRandomElement(ArrayList<E> list){
+		Random random = new Random();
+		int index = random.nextInt(list.size());
+		return list.get(index);
+	}
+	
+	public String getFriendlyTimestamp(Timestamp time){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(time.getTime());
+		String weekday = calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.ENGLISH);
+		String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		int min = calendar.get(Calendar.MINUTE);
+		String ampm = (calendar.get(Calendar.AM_PM) == Calendar.AM ? "a" : "p");
+		return weekday + ", " + month + " " + day + ", " + (hour > 12 ? hour - 12 : hour) + ":" + (min < 10 ? "0" + min : min) + ampm;
 	}
 	
 }
