@@ -4,4 +4,4 @@ description: A plugin API inspired by DeityAPI
 version: 2.3.2
 load: startup
 authors: [KILL3RTACO]
-softdepend: [ItemMail, WorldEdit, Vault]
+softdepend: [WorldEdit, Vault]
