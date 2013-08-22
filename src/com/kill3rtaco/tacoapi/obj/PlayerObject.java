@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -60,23 +59,13 @@ public class PlayerObject {
 		return cats;
 	}
 	
-	public void sendItemMail(Plugin plugin, String sender, String receiver, int itemId, int itemDamage, int itemAmount){
-		if(TacoAPI.isItemMailInstalled()){
-			sendItemMail(plugin, sender, receiver, itemId, itemDamage, itemAmount, "", "");
-		}else{
-			TacoAPI.getChatAPI().out("The plugin '" + plugin.getName() + "' tried to send ItemMail without ItemMail being installed on server");
-		}
+	public void sendItemMail(Plugin plugin, String sender, String receiver, ItemStack items){
+		sendItemMail(plugin, sender, receiver, items, "Sent via TacoAPI");
 	}
 	
-	public void sendItemMail(Plugin plugin, String sender, String receiver, int itemId, int itemDamage, int itemAmount, String enchantCode, String itemName){
+	public void sendItemMail(Plugin plugin, String sender, String receiver, ItemStack items, String notes){
 		if(TacoAPI.isItemMailInstalled()){
-			Material m = Material.getMaterial(itemId);
-			if(m == null){
-				TacoAPI.getChatAPI().out("Material with the id " + itemId + " does not exist (" + plugin.getName() + ")");
-				return;
-			}
-			ItemMail im = new ItemMail(sender, receiver, itemId, itemDamage, itemAmount, enchantCode, itemName);
-			im.send();
+			ItemMail.sendUnsafely(sender, receiver, items, notes);
 		}else{
 			TacoAPI.getChatAPI().out("The plugin '" + plugin.getName() + "' tried to send ItemMail without ItemMail being installed on server");
 		}
