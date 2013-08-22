@@ -24,13 +24,13 @@ public class PlayerListener implements Listener {
 		TacoAPI.getPlayerAPI().saveGameMode(player.getName(), player.getGameMode());
 	}
 	
-	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent event){
-		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.SIGN_POST){
-			TacoAPI.getPlayerAPI().savePlayerInventory(event.getPlayer());
-		}else{
-			TacoAPI.getPlayerAPI().restoreInventory(event.getPlayer());
-		}
-	}
+//	@EventHandler
+//	public void onPlayerInteract(PlayerInteractEvent event){
+//		if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.SIGN_POST){
+//			TacoAPI.getPlayerAPI().savePlayerInventory(event.getPlayer());
+//		}else{
+//			TacoAPI.getPlayerAPI().restoreInventory(event.getPlayer());
+//		}
+//	}
 	
 }

@@ -8,6 +8,12 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
 
+/**
+ * A class to help with the serialization of dyed leather armor. The Red, Green, and Blue values are saved
+ * appropriately.
+ * @author KILL3RTACO
+ *
+ */
 public class LeatherArmorSerialization {
 
 	protected LeatherArmorSerialization() {}

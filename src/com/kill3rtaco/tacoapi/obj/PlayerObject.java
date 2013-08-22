@@ -117,6 +117,7 @@ public class PlayerObject {
 		double x = config.getDouble("last-location.x");
 		double y = config.getDouble("last-location.y");
 		double z = config.getDouble("last-location.z");
+		TacoAPI.plugin.chat.out(world + " " + x + " " + y + " " + z);
 		return new Location(w, x, y, z);
 	}
 	

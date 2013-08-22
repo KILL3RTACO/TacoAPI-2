@@ -102,7 +102,7 @@ public class QueryResults {
 	 */
 	public long getLong(int index, String columnName) throws DatabaseException  {
 		Object obj = getObject(index, columnName);
-		if(obj instanceof Double){
+		if(obj instanceof Long){
 			return (long) obj;
 		}else{
 			return 0L;

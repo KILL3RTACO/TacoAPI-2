@@ -12,6 +12,12 @@ import com.kill3rtaco.tacoapi.json.JSONArray;
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
 
+/**
+ * A class to help with the serialization of books. There are separate methods provided for the ItemMeta
+ * of enchanted books and written books
+ * @author KILL3RTACO
+ *
+ */
 public class BookSerialization {
 
 	protected BookSerialization() {}

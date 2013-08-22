@@ -9,11 +9,13 @@ import com.kill3rtaco.tacoapi.listener.PlayerListener;
 import com.kill3rtaco.tacoapi.obj.ChatObject;
 import com.kill3rtaco.tacoapi.obj.EconObject;
 import com.kill3rtaco.tacoapi.obj.EffectObject;
+import com.kill3rtaco.tacoapi.obj.PermObject;
 import com.kill3rtaco.tacoapi.obj.PlayerObject;
 import com.kill3rtaco.tacoapi.obj.ServerObject;
 import com.kill3rtaco.tacoapi.obj.WorldEditObject;
 import com.kill3rtaco.tacoapi.util.ChatUtils;
 import com.kill3rtaco.tacoapi.util.ItemUtils;
+import com.kill3rtaco.tacoapi.util.TimeUtils;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class TacoAPI extends TacoPlugin {
@@ -21,9 +23,17 @@ public class TacoAPI extends TacoPlugin {
 	public static TacoAPI plugin;
 	public static TacoAPIConfig config;
 	public static File playerData;
-	private static Database data;
-	private static WorldEditObject we;
-	private static EconObject econ;
+	private static ChatObject chatAPI;
+	private static ChatUtils chatUtils;
+	private static EconObject econAPI;
+	private static EffectObject effectAPI;
+	private static ItemUtils itemUtils;
+	private static Database mysqlAPI;
+	private static PermObject permAPI;
+	private static PlayerObject playerAPI;
+	private static ServerObject serverAPI;
+	private static TimeUtils timeUtils;
+	private static WorldEditObject weAPI;
 	
 	@Override
 	public void onStart() {
@@ -33,31 +43,70 @@ public class TacoAPI extends TacoPlugin {
 		if(!playerData.exists()){
 			playerData.mkdir();
 		}
+		
+		//Utils/Chat
+		chatUtils = new ChatUtils();
+		chat.out("[Utils] [Chat] Helper online");
+		
+		//Utils/Item
+		itemUtils = new ItemUtils();
+		chat.out("[Utils] [Item] Helper online");
+		
+		//Utils/Time
+		timeUtils = new TimeUtils();
+		chat.out("[Utils] [Time] Helper online");
+		
+		//ChatAPI
+		chatAPI = chat;
+		chat.out("[Chat] API online");
+		
+		//EconomyAPI
+		try{
+			econAPI = new EconObject();
+			chat.out("[Economy] API online. Using " + econAPI.getEconomyName() + " for EconAPI");
+		}catch(NoClassDefFoundError e){
+			econAPI = null;
+			chat.outWarn("[Economy] API not loaded");
+		}
+		
+		//EffectAPI
+		effectAPI = new EffectObject();
+		chat.out("[Effect] API Online");
+		
+		//MySQLAPI
 		try {
-			data = new Database();
+			mysqlAPI = new Database();
 			chat.out("[MySQL] API online");
 		} catch (SQLException e) {
-			data = null;
+			mysqlAPI = null;
 			getChatAPI().outWarn("[MySQL] Could not hook into MySQL. Did you update the config.yml?");
 		}
+		
+		//PermAPI
+		permAPI = new PermObject();
+		chat.out("[Permissions] API Online");
+		
+		//PlayerAPI
+		playerAPI = new PlayerObject();
+		chat.out("[Player] API Online");
+		
+		//ServerAPI
+		serverAPI = new ServerObject();
+		chat.out("[Server] API Online");
+		
+		//WorldEditAPI
 		try {
 			WorldEditPlugin wePlugin = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
 			if(wePlugin == null){
 				chat.outWarn("[WorldEdit] API not loaded");
 			}else{
-				we = new WorldEditObject(wePlugin);
+				weAPI = new WorldEditObject(wePlugin);
 				chat.out("[WorldEdit] API online");
 			}
 		} catch (NoClassDefFoundError e) {
 			chat.outWarn("[WorlEdit] API not loaded");
 		}
-		try{
-			econ = new EconObject();
-			chat.out("[Economy] API online. Using " + econ.getEconomyName() + " for EconAPI");
-		}catch(NoClassDefFoundError e){
-			econ = null;
-			chat.outWarn("[Economy] API not loaded");
-		}
+		
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 	}
 
@@ -67,39 +116,47 @@ public class TacoAPI extends TacoPlugin {
 	}
 	
 	public static ChatObject getChatAPI(){
-		return new ChatObject("TacoAPI");
+		return chatAPI;
 	}
 	
 	public static ChatUtils getChatUtils(){
-		return new ChatUtils();
+		return chatUtils;
 	}
 	
 	public static Database getDB(){
-		return data;
+		return mysqlAPI;
 	}
 	
 	public static EconObject getEconAPI(){
-		return econ;
+		return econAPI;
 	}
 	
 	public static EffectObject getEffectAPI(){
-		return new EffectObject();
+		return effectAPI;
 	}
 	
 	public static ItemUtils getItemUtils(){
-		return new ItemUtils();
+		return itemUtils;
 	}
 	
-	public static ServerObject getServerAPI(){
-		return new ServerObject();
+	public static PermObject getPermAPI(){
+		return permAPI;
 	}
 	
 	public static PlayerObject getPlayerAPI(){
-		return new PlayerObject();
+		return playerAPI;
+	}
+	
+	public static TimeUtils getTimeUtils(){
+		return timeUtils;
+	}
+	
+	public static ServerObject getServerAPI(){
+		return serverAPI;
 	}
 	
 	public static WorldEditObject getWorldEditAPI(){
-		return we;
+		return weAPI;
 	}
 	
 	public static boolean isItemMailInstalled(){
@@ -107,11 +164,11 @@ public class TacoAPI extends TacoPlugin {
 	}
 	
 	public static boolean isEconAPIOnline(){
-		return econ != null;
+		return econAPI != null;
 	}
 	
 	public static boolean isWorldEditAPIOnline(){
-		return we != null;
+		return weAPI != null;
 	}
 	
 }
