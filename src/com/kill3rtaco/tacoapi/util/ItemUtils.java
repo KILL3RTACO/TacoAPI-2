@@ -205,6 +205,7 @@ public class ItemUtils {
 		PROJECTILE_PROTECTION(4),
 		RESPIRATION(5),
 		AQUA_AFFINITY(6),
+		THORNS(7),
 		SHARPNESS(16),
 		SMITE(17),
 		BANE_OF_ARTHROPODS(18),
@@ -231,7 +232,7 @@ public class ItemUtils {
 		}
 		
 		public String getName(){
-			return TacoAPI.getChatUtils().toProperCase(name());
+			return TacoAPI.getChatUtils().toProperCase(name().replace("_", " "));
 		}
 		
 		public static EnchantDisplayName getDisplayName(int id){

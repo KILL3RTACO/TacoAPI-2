@@ -115,7 +115,7 @@ public class SingleItemSerialization {
 				throw new IllegalArgumentException("Item "+ index + " - No Material found with id of " + id);
 			Material mat = Material.getMaterial(id);
 			ItemStack stuff = new ItemStack(mat, amount, (short) data);
-			if(mat == Material.BOOK_AND_QUILL || mat == Material.WRITTEN_BOOK){
+			if((mat == Material.BOOK_AND_QUILL || mat == Material.WRITTEN_BOOK) && item.has("book-meta")){
 				BookMeta meta = BookSerialization.getBookMeta(item.getJSONObject("book-meta"));
 				stuff.setItemMeta(meta);
 			}else if(mat == Material.ENCHANTED_BOOK){

@@ -174,16 +174,39 @@ public class ChatUtils {
 	 * @return the converted String
 	 */
 	public String toProperCase(String s){
+		if(s.isEmpty()) return "";
+		String[] unimportant = new String[]{"a", "an", "and", "but", "is", "are", "for", "nor", "of", "or", "so", "the", "to", "yet"};
+		String[] split = s.split("\\s+");
 		String result = "";
-		for(String str : s.split("\\s+")){
-			String firstChar = (str.charAt(0) + "").toUpperCase();
-			if(str.length() == 1){
-				result += firstChar + " ";
-			}else{
-				result += firstChar + str.substring(1).toLowerCase() + " ";
+		for(int i=0; i<split.length; i++){
+			String word = split[i];
+			boolean capitalize = true;
+			for(String str : unimportant){
+				if(str.equalsIgnoreCase(word)){
+					if(i > 0 && i < split.length - 1){ //middle unimportant word
+						capitalize = false;
+						break;
+					}
+				}
 			}
+			if(capitalize) result += capitalize(word) + " ";
+			else result += word.toLowerCase() + " ";
 		}
-		return result.substring(0, result.length() - 1);
+		return result.trim();
+	}
+	
+	public String capitalize(String s){
+		if(s.isEmpty()) return "";
+		if(s.length() == 1){
+			return s.toUpperCase();
+		}else if(s.length() == 2){
+			String first = (s.charAt(0) + "").toUpperCase();
+			String sec = (s.charAt(1) + "").toLowerCase();
+			return first + sec;
+		}else{
+			s = s.toUpperCase();
+			return s.charAt(0) + s.substring(1, s.length()).toLowerCase();
+		}
 	}
 	
 	public <E> E getRandomElement(ArrayList<E> list){
