@@ -100,6 +100,17 @@ public class EconObject {
 		}else{
 			return false;
 		}
+		
+	}
+	
+	/**
+	 * Test if a player has the amount given
+	 * @param player The player to test
+	 * @param amount The amount to test
+	 * @return Whether the player can pay the amount given
+	 */
+	public boolean canPay(String player, double amount){
+		return econ.has(player, amount);
 	}
 	
 }

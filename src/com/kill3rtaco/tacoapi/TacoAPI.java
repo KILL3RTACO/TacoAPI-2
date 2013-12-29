@@ -3,6 +3,7 @@ package com.kill3rtaco.tacoapi;
 import java.io.File;
 import java.sql.SQLException;
 
+import com.kill3rtaco.tacoapi.api.serialization.SerializationConfig;
 import com.kill3rtaco.tacoapi.api.TacoPlugin;
 import com.kill3rtaco.tacoapi.database.Database;
 import com.kill3rtaco.tacoapi.listener.PlayerListener;
@@ -107,7 +108,11 @@ public class TacoAPI extends TacoPlugin {
 			chat.outWarn("[WorlEdit] API not loaded");
 		}
 		
+		//SerializationConfig
+		SerializationConfig.reload();
+		
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		startMetrics();
 	}
 
 	@Override

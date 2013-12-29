@@ -61,7 +61,9 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 		help.append("&b/" + cmdName + "&7: &b" + description);
 		help.append("&b/" + cmdName + " &3<help/?> [page]&7: &bShows help");
 		for(TacoCommand tc : commands){
-			help.append("&b/" + cmdName + " &3" + tc.getName() + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
+			String delimiter = "&b/&3";
+			String aliases = (tc.getAliases().length > 1 ? TacoAPI.getChatUtils().join(tc.getAliases(), delimiter) : "");
+			help.append("&b/" + cmdName + " &3" + tc.getName() + aliases  + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
 		}
 		help.showPage(sender, page);
 	}

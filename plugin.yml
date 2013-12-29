@@ -1,7 +1,7 @@
 name: TacoAPI
 main: com.kill3rtaco.tacoapi.TacoAPI
 description: A plugin API inspired by DeityAPI
-version: 2.4
+version: 2.4.1
 load: startup
 authors: [KILL3RTACO]
 softdepend: [ItemMail, WorldEdit, Vault]

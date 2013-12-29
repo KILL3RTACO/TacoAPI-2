@@ -1,8 +1,8 @@
 package com.kill3rtaco.tacoapi.obj;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
@@ -20,22 +20,35 @@ public class ServerObject {
 	}
 	
 	public String getShortestAlias(JavaPlugin plugin, String name){
-		PluginCommand cmd = plugin.getCommand(name);
-		if(cmd == null) return null;
-		List<String> aliases = cmd.getAliases();
-		if(aliases == null || aliases.size() == 0) return name;
-		aliases.add(name);
-		Collections.sort(aliases, new Comparator<String>(){
-
-			@Override
-			public int compare(String s1, String s2) {
-				Integer s1l = s1.length();
-				Integer s2l = s2.length();
-				return s1l.compareTo(s2l);
+		ArrayList<String> aliases = new ArrayList<String>();
+		if(pluginOwnsCommand(plugin, name)){
+			aliases.add(name);
+		}
+		//test if the aliases, when used, belong to the given JavaPlugin
+		for(String s : plugin.getCommand(name).getAliases()){
+			if(pluginOwnsCommand(plugin, s)){
+				aliases.add(s);
 			}
-			
-		});
+		}
+		if(aliases.size() == 0){
+			return null;
+		}else if(aliases.size() > 1){
+			Collections.sort(aliases, new Comparator<String>(){
+
+				@Override
+				public int compare(String s1, String s2) {
+					Integer l1 = s1.length();
+					Integer l2 = s2.length();
+					return l1.compareTo(l2);
+				}
+				
+			});
+		}
 		return aliases.get(0);
+	}
+	
+	public boolean pluginOwnsCommand(Plugin plugin, String alias){
+		return getPluginFromCommand(alias).getName().equalsIgnoreCase(plugin.getName());
 	}
 
 }

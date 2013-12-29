@@ -227,4 +227,20 @@ public class ChatUtils {
 		return weekday + ", " + month + " " + day + ", " + (hour > 12 ? hour - 12 : hour) + ":" + (min < 10 ? "0" + min : min) + ampm;
 	}
 	
+	/**
+     * Shortens the string to fit in the specified size with an elipse "..." at
+     * the end.
+     * 
+     * @return the shortened string
+     */
+    public String maxLength(String str, int length) {
+        if (str.length() < length) {
+            return str;
+        } else if (length > 3) {
+            return str.substring(0, length - 3) + "...";
+        } else {
+            throw new IllegalArgumentException("Minimum length of 3 characters.");
+        }
+    }
+	
 }

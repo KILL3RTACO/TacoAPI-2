@@ -1,5 +1,8 @@
 package com.kill3rtaco.tacoapi.util;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 public class TimeUtils {
 
 	public enum Time { 
@@ -110,6 +113,26 @@ public class TimeUtils {
 		if(seconds > 0)
 			t += seconds + "s";
 		return t.trim();
+	}
+	
+	public String getFriendlyDate(long time, boolean hour12, boolean shortDisplay){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(time);
+		String weekday, month, ap;
+		int day, year, hour, min;
+		int style =  shortDisplay ? Calendar.SHORT : Calendar.LONG;
+		Locale locale = Locale.getDefault();
+		month = calendar.getDisplayName(Calendar.MONTH, style, locale);
+		day = calendar.get(Calendar.DAY_OF_MONTH);
+		weekday = calendar.getDisplayName(Calendar.DAY_OF_WEEK, style, locale);
+		year = calendar.get(Calendar.YEAR);
+		hour = calendar.get(Calendar.HOUR_OF_DAY);
+		if(hour12 && hour > 12) hour -= 12;
+		else if(hour12 && hour == 0) hour = 12;
+		min = calendar.get(Calendar.MINUTE);
+		ap = (hour12 ? calendar.getDisplayName(Calendar.AM_PM, style, locale) : "");
+		
+		return weekday + ", " + month + " " + day + ", " + year + " - " + hour + ":" + min + ap;
 	}
 
 }

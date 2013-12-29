@@ -4,15 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class QueryResults {
+public class QueryResults implements Iterable<QueryResultsRow> {
 
-	private ArrayList<String> columns;
-	private ArrayList<ArrayList<Object>> values;
+	private ArrayList<QueryResultsRow> values;
 	
 	public QueryResults(ResultSet set) {
-		columns = new ArrayList<String>();
-		values = new ArrayList<ArrayList<Object>>();
+		values = new ArrayList<QueryResultsRow>();
+		ArrayList<String> columns = new ArrayList<String>();
 		try{
 			for(int i=1; i<=set.getMetaData().getColumnCount(); i++){
 				columns.add(set.getMetaData().getColumnName(i));
@@ -22,7 +22,7 @@ public class QueryResults {
 				for(String column : columns){
 					row.add(set.getObject(column));
 				}
-				values.add(row);
+				values.add(new QueryResultsRow(columns, row));
 			}
 		} catch(SQLException e){
 			e.printStackTrace();
@@ -37,12 +37,7 @@ public class QueryResults {
 	 * @throws DatabaseException
 	 */
 	public boolean getBoolean(int index, String columnName) throws DatabaseException {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Boolean){
-			return (boolean) obj;
-		}else{
-			return false;
-		}
+		return values.get(index).getBoolean(columnName);
 	}
 
 	/**
@@ -53,12 +48,7 @@ public class QueryResults {
 	 * @throws DatabaseException
 	 */
 	public double getDouble(int index, String columnName) throws DatabaseException {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Double){
-			return (double) obj;
-		}else{
-			return 0D;
-		}
+		return values.get(index).getDouble(columnName);
 	}
 	
 	/**
@@ -69,12 +59,7 @@ public class QueryResults {
 	 * @throws DatabaseException
 	 */
 	public float getFloat(int index, String columnName) throws DatabaseException{
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Float){
-			return (float) obj;
-		}else{
-			return 0F;
-		}
+		return values.get(index).getFloat(columnName);
 	}
 	
 	/**
@@ -85,12 +70,7 @@ public class QueryResults {
 	 * @throws DatabaseException 
 	 */
 	public int getInteger(int index, String columnName) throws DatabaseException {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Integer){
-			return (int) obj;
-		}else{
-			return 0;
-		}
+		return values.get(index).getInteger(columnName);
 	}
 	
 	/**
@@ -101,12 +81,7 @@ public class QueryResults {
 	 * @throws DatabaseException 
 	 */
 	public long getLong(int index, String columnName) throws DatabaseException  {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Long){
-			return (long) obj;
-		}else{
-			return 0L;
-		}
+		return values.get(index).getLong(columnName);
 	}
 	
 	/**
@@ -117,17 +92,7 @@ public class QueryResults {
 	 * @throws DatabaseException 
 	 */
 	public Object getObject(int index, String columnName) throws DatabaseException {
-		int rows = rowCount();
-		if(index > rows - 1) throw new DatabaseException(index + " > (rowCount() - 1), which is " + rows);
-		int columnIndex = -1;
-		for(int i=0; i<columns.size(); i++){
-			if(columns.get(i).equalsIgnoreCase(columnName)){
-				columnIndex = i;
-				break;
-			}
-		}
-		if(columnIndex == -1) throw new DatabaseException("Column with the name of '" + columnName + "' not found");
-		return values.get(index).get(columnIndex);
+		return values.get(index).getObject(columnName);
 	}
 	
 	/**
@@ -138,12 +103,7 @@ public class QueryResults {
 	 * @throws DatabaseException 
 	 */
 	public short getShort(int index, String columnName) throws DatabaseException {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Short){
-			return (short) obj;
-		}else{
-			return 0;
-		}
+		return values.get(index).getShort(columnName);
 	}
 	
 	/**
@@ -154,12 +114,7 @@ public class QueryResults {
 	 * @throws DatabaseException 
 	 */
 	public String getString(int index, String columnName) throws DatabaseException {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof String){
-			return (String) obj;
-		}else{
-			return null;
-		}
+		return values.get(index).getString(columnName);
 	}
 	
 	/**
@@ -170,12 +125,7 @@ public class QueryResults {
 	 * @throws DatabaseException
 	 */
 	public Timestamp getTimestamp(int index, String columnName) throws DatabaseException {
-		Object obj = getObject(index, columnName);
-		if(obj instanceof Timestamp){
-			return (Timestamp) obj;
-		}else{
-			return null;
-		}
+		return values.get(index).getTimestamp(columnName);
 	}
 	
 	/**
@@ -192,6 +142,11 @@ public class QueryResults {
 	 */
 	public int rowCount(){
 		return values.size();
+	}
+
+	@Override
+	public Iterator<QueryResultsRow> iterator() {
+		return values.iterator();
 	}
 
 }

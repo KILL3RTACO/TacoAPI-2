@@ -1,10 +1,8 @@
 package com.kill3rtaco.tacoapi.api.serialization;
 
-import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
 
@@ -12,50 +10,75 @@ import com.kill3rtaco.tacoapi.json.JSONObject;
  * A class to help with the serialization of dyed leather armor. The Red, Green, and Blue values are saved
  * appropriately.
  * @author KILL3RTACO
+ * @since 1.0
  *
  */
 public class LeatherArmorSerialization {
-
-	protected LeatherArmorSerialization() {}
 	
-	public static JSONObject serializeArmor(LeatherArmorMeta meta){
+	protected LeatherArmorSerialization() {
+	}
+	
+	/**
+	 * Serialize LeatherArmorMeta, saving the Color's rgb value.
+	 * @param meta The LeatherArmorMeta to serialize
+	 * @return The serialized meta information
+	 */
+	public static JSONObject serializeArmor(LeatherArmorMeta meta) {
 		try {
 			JSONObject root = new JSONObject();
-			JSONObject color = new JSONObject();
-			Color c = meta.getColor();
-			color.put("red", c.getRed());
-			color.put("green", c.getGreen());
-			color.put("blue", c.getBlue());
-			root.put("color", color);
+			root.put("color", ColorSerialization.serializeColor(meta.getColor()));
 			return root;
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
-	public static String serializeArmorAsString(LeatherArmorMeta meta){
+	
+	/**
+	 * Serializes the LeatherArmorMeta using serializeArmor() and returns the String form.
+	 * @param meta The LeatherArmorMeta to serialized
+	 * @return The serialization string
+	 */
+	public static String serializeArmorAsString(LeatherArmorMeta meta) {
 		return serializeArmorAsString(meta, false);
 	}
-
-	public static String serializeArmorAsString(LeatherArmorMeta meta, boolean pretty){
+	
+	/**
+	 * Serializes the LeatherArmorMeta using serializeArmor() and returns the String form.
+	 * @param meta The LeatherArmorMeta to serialized
+	 * @param pretty Whether the resulting String should be 'pretty' or not
+	 * @return The serialization string
+	 */
+	public static String serializeArmorAsString(LeatherArmorMeta meta, boolean pretty) {
 		return serializeArmorAsString(meta, pretty, 5);
 	}
-
-	public static String serializeArmorAsString(LeatherArmorMeta meta, boolean pretty, int indentFactor){
+	
+	/**
+	 * Serializes the LeatherArmorMeta using serializeArmor() and returns the String form.
+	 * @param meta The LeatherArmorMeta to serialized
+	 * @param pretty Whether the resulting String should be 'pretty' or not
+	 * @param indentFactor the amount of spaces in a tab
+	 * @return The serialization string
+	 */
+	public static String serializeArmorAsString(LeatherArmorMeta meta, boolean pretty, int indentFactor) {
 		try {
-			if(pretty){
+			if(pretty) {
 				return serializeArmor(meta).toString(indentFactor);
-			}else{
+			} else {
 				return serializeArmor(meta).toString();
 			}
-		} catch (JSONException e){
+		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	public static LeatherArmorMeta getLeatherArmorMeta(String json){
+	/**
+	 * Gets LeatherArmorMeta from the a JSONObject constructed from the given String
+	 * @param json The String to use
+	 * @return LeatherArmorMeta taken from a JSONObject constructed from the given String
+	 */
+	public static LeatherArmorMeta getLeatherArmorMeta(String json) {
 		try {
 			return getLeatherArmorMeta(new JSONObject(json));
 		} catch (JSONException e) {
@@ -64,28 +87,23 @@ public class LeatherArmorSerialization {
 		}
 	}
 	
-	public static LeatherArmorMeta getLeatherArmorMeta(JSONObject json){
+	/**
+	 * Gets LeatherArmorMeta from the given JSONObject
+	 * @param json The JSONObject to decode
+	 * @return LeatherArmorMeta taken from the given JSONObject as a reference
+	 */
+	public static LeatherArmorMeta getLeatherArmorMeta(JSONObject json) {
 		try {
 			ItemStack dummyItems = new ItemStack(Material.LEATHER_HELMET, 1);
 			LeatherArmorMeta meta = (LeatherArmorMeta) dummyItems.getItemMeta();
-			if(json.has("color")){
-				JSONObject color = json.getJSONObject("color");
-				int r, g, b;
-				
-				if(color.has("red")) r = color.getInt("red");
-				else r = 0;
-				if(color.has("green")) g = color.getInt("green");
-				else g = 0;
-				if(color.has("blue")) b = color.getInt("blue");
-				else b = 0;
-				
-				meta.setColor(Color.fromRGB(r, g, b));
+			if(json.has("color")) {
+				meta.setColor(ColorSerialization.getColor(json.getJSONObject("color")));
 			}
 			return meta;
-		} catch(JSONException e){
+		} catch (JSONException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
+	
 }
