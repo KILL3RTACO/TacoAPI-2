@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.util.PageBuilder;
 
-
 /**
  * Represents a command. The name of this class should use the pattern [CommandName]CommandHandler. e.g. if the command in the
  * plugin.yml was 'give' then the class name should be 'GiveCommandHandler'
@@ -20,39 +19,38 @@ import com.kill3rtaco.tacoapi.util.PageBuilder;
  * @see TacoHelpCommand
  *
  */
-public abstract class TacoCommandHandler implements CommandExecutor{
+public abstract class TacoCommandHandler implements CommandExecutor {
 	
-	private String cmdName, description, permission;
-	private ArrayList<TacoCommand> commands;
+	private String					cmdName, description, permission;
+	private ArrayList<TacoCommand>	commands;
 	
-	public TacoCommandHandler(String cmdName, String description, String permission){
+	public TacoCommandHandler(String cmdName, String description, String permission) {
 		this.commands = new ArrayList<TacoCommand>();
 		this.cmdName = cmdName;
 		this.description = description;
 		this.permission = permission;
 		registerCommands();
 	}
-
+	
 	/**
 	 * Method used to register subcommands
 	 */
 	protected abstract void registerCommands();
 	
-	
-	private void showHelp(Player player, int page){
+	protected void showHelp(Player player, int page) {
 		Collections.sort(commands);
 		PageBuilder help = new PageBuilder("&b" + TacoAPI.getChatUtils().toProperCase(cmdName) + " Help", "&3");
 		help.append("&b/" + cmdName + "&7: &b" + description);
 		help.append("&b/" + cmdName + " &3<help/?> [page]&7: &bShows help");
-		for(TacoCommand tc : commands){
+		for(TacoCommand tc : commands) {
 			if(TacoAPI.getPermAPI().hasPermission(player, tc.getPermission()))
 				help.append("&b/" + cmdName + " &3" + tc.getName() + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
 		}
 		help.showPage(player, page);
 	}
 	
-	private void showHelp(CommandSender sender, int page){
-		if(sender instanceof Player){
+	protected void showHelp(CommandSender sender, int page) {
+		if(sender instanceof Player) {
 			showHelp((Player) sender, page);
 			return;
 		}
@@ -60,10 +58,10 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 		PageBuilder help = new PageBuilder("&b" + TacoAPI.getChatUtils().toProperCase(cmdName) + " Help", "&3");
 		help.append("&b/" + cmdName + "&7: &b" + description);
 		help.append("&b/" + cmdName + " &3<help/?> [page]&7: &bShows help");
-		for(TacoCommand tc : commands){
+		for(TacoCommand tc : commands) {
 			String delimiter = "&b/&3";
 			String aliases = (tc.getAliases().length > 1 ? TacoAPI.getChatUtils().join(tc.getAliases(), delimiter) : "");
-			help.append("&b/" + cmdName + " &3" + tc.getName() + aliases  + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
+			help.append("&b/" + cmdName + " &3" + tc.getName() + aliases + " " + tc.getArgs() + "&7: &b" + tc.getDescription());
 		}
 		help.showPage(sender, page);
 	}
@@ -72,64 +70,64 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	 * Registers a subcommand for this command. A subcommand is the first argument in a command
 	 * @param command - The TacoCommand to register
 	 */
-	protected void registerCommand(TacoCommand command){
+	protected void registerCommand(TacoCommand command) {
 		commands.add(command);
 	}
 	
 	/**
 	 * Default Bukkit onCommand() call. This is used to filter the command being used, and will run if found.
 	 */
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-		if(args.length == 0){
-			if(sender instanceof Player){
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if(args.length == 0) {
+			if(sender instanceof Player) {
 				if(TacoAPI.getPermAPI().hasPermission((Player) sender, permission))
 					onPlayerCommand((Player) sender);
 				else
 					TacoAPI.getChatAPI().sendInvalidPermissionsMessage((Player) sender);
-			}else{
-				if(!onConsoleCommand()){
+			} else {
+				if(!onConsoleCommand()) {
 					TacoAPI.getChatAPI().outNoHeader("&cThis command must be run by a player");
 				}
 			}
-		}else{
-			if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
-				if(args.length == 1){ // "help"
+		} else {
+			if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")) {
+				if(args.length == 1) { // "help"
 					showHelp(sender, 1);
-				}else{ // "help [page]"
-					try{
+				} else { // "help [page]"
+					try {
 						int page = Integer.parseInt(args[1]);
 						showHelp(sender, page);
-					} catch (NumberFormatException e){
+					} catch (NumberFormatException e) {
 						showHelp(sender, 1);
 					}
 				}
-			}else{
+			} else {
 				runCommand(sender, args);
 			}
 		}
 		return true;
 	}
 	
-	private void runCommand(CommandSender sender, String[] args){
+	private void runCommand(CommandSender sender, String[] args) {
 		String subcommand = args[0];
 		TacoCommand tc = getCommandByAlias(subcommand);
 		args = TacoAPI.getChatUtils().removeFirstArg(args);
-		if(sender instanceof Player){
+		if(sender instanceof Player) {
 			Player player = (Player) sender;
-			if(tc != null){
+			if(tc != null) {
 				if(TacoAPI.getPermAPI().hasPermission(player, tc.getPermission()))
 					tc.onPlayerCommand(player, args);
 				else
 					TacoAPI.getChatAPI().sendInvalidPermissionsMessage(player);
-			}else{
+			} else {
 				TacoAPI.getChatAPI().sendInvalidSubCommandMessage((Player) sender, subcommand);
 			}
-		}else{
-			if(tc != null){
-				if(!tc.onConsoleCommand(args)){
+		} else {
+			if(tc != null) {
+				if(!tc.onConsoleCommand(args)) {
 					TacoAPI.getChatAPI().outNoHeader("&cThis command must be run by a player");
 				}
-			}else{
+			} else {
 				TacoAPI.getChatAPI().sendInvalidSubCommandMessage(sender, subcommand);
 			}
 		}
@@ -139,7 +137,7 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	 * Gets the name of this command.
 	 * @return The name of this {@link TacoCommandHandler TacoCommandHandler}
 	 */
-	public String getName(){
+	public String getName() {
 		return cmdName;
 	}
 	
@@ -159,9 +157,29 @@ public abstract class TacoCommandHandler implements CommandExecutor{
 	 * @param alias the alias used to get the TacoCommand
 	 * @return the TacoCommand found, or null if there wasn't one
 	 */
-	public TacoCommand getCommandByAlias(String alias){
+	public TacoCommand getCommandByAlias(String alias) {
 		for(TacoCommand tc : commands)
-			if(tc.hasAlias(alias)) return tc;
+			if(tc.hasAlias(alias))
+				return tc;
 		return null;
+	}
+	
+	/**
+	 * Called when a number is typed as a subcommand by the console
+	 * @param num The number that was typed
+	 * @return Whether the command should stop being parsed
+	 */
+	public boolean onNumberGiven(int num) {
+		return false;
+	}
+	
+	/**
+	 * Called when a number is typed as a subcommand by a player
+	 * @param player The player that executed the command
+	 * @param num The number that was typed
+	 * @return Whether the command should stop being parsed
+	 */
+	public boolean onNumberGiven(Player player, int num) {
+		return false;
 	}
 }

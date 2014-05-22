@@ -3,6 +3,7 @@ package com.kill3rtaco.tacoapi.api.serialization;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
 

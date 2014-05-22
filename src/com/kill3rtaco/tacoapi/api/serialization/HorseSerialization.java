@@ -2,6 +2,7 @@ package com.kill3rtaco.tacoapi.api.serialization;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Horse;
+
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
 

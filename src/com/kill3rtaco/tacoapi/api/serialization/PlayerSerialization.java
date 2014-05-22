@@ -1,6 +1,7 @@
 package com.kill3rtaco.tacoapi.api.serialization;
 
 import org.bukkit.entity.Player;
+
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
 

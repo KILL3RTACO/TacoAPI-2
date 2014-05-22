@@ -3,8 +3,10 @@ package com.kill3rtaco.tacoapi;
 import java.io.File;
 import java.sql.SQLException;
 
-import com.kill3rtaco.tacoapi.api.serialization.SerializationConfig;
 import com.kill3rtaco.tacoapi.api.TacoPlugin;
+import com.kill3rtaco.tacoapi.api.ncommands.CommandManager;
+import com.kill3rtaco.tacoapi.api.serialization.SerializationConfig;
+import com.kill3rtaco.tacoapi.commands.DevCommands;
 import com.kill3rtaco.tacoapi.database.Database;
 import com.kill3rtaco.tacoapi.listener.PlayerListener;
 import com.kill3rtaco.tacoapi.obj.ChatObject;
@@ -21,27 +23,28 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class TacoAPI extends TacoPlugin {
 	
-	public static TacoAPI plugin;
-	public static TacoAPIConfig config;
-	public static File playerData;
-	private static ChatObject chatAPI;
-	private static ChatUtils chatUtils;
-	private static EconObject econAPI;
-	private static EffectObject effectAPI;
-	private static ItemUtils itemUtils;
-	private static Database mysqlAPI;
-	private static PermObject permAPI;
-	private static PlayerObject playerAPI;
-	private static ServerObject serverAPI;
-	private static TimeUtils timeUtils;
-	private static WorldEditObject weAPI;
+	public static TacoAPI			plugin;
+	public static TacoAPIConfig		config;
+	public static File				playerData;
+	private static ChatObject		chatAPI;
+	private static ChatUtils		chatUtils;
+	private static EconObject		econAPI;
+	private static EffectObject		effectAPI;
+	private static ItemUtils		itemUtils;
+	private static Database			mysqlAPI;
+	private static PermObject		permAPI;
+	private static PlayerObject		playerAPI;
+	private static ServerObject		serverAPI;
+	private static TimeUtils		timeUtils;
+	private static WorldEditObject	weAPI;
+	private static CommandManager	commands;
 	
 	@Override
 	public void onStart() {
 		plugin = this;
 		config = new TacoAPIConfig(new File(getDataFolder() + "/config.yml"));
 		playerData = new File(getDataFolder() + "/playerData");
-		if(!playerData.exists()){
+		if(!playerData.exists()) {
 			playerData.mkdir();
 		}
 		
@@ -62,10 +65,10 @@ public class TacoAPI extends TacoPlugin {
 		chat.out("[Chat] API online");
 		
 		//EconomyAPI
-		try{
+		try {
 			econAPI = new EconObject();
 			chat.out("[Economy] API online. Using " + econAPI.getEconomyName() + " for EconAPI");
-		}catch(NoClassDefFoundError e){
+		} catch (NoClassDefFoundError e) {
 			econAPI = null;
 			chat.outWarn("[Economy] API not loaded");
 		}
@@ -98,9 +101,9 @@ public class TacoAPI extends TacoPlugin {
 		//WorldEditAPI
 		try {
 			WorldEditPlugin wePlugin = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
-			if(wePlugin == null){
+			if(wePlugin == null) {
 				chat.outWarn("[WorldEdit] API not loaded");
-			}else{
+			} else {
 				weAPI = new WorldEditObject(wePlugin);
 				chat.out("[WorldEdit] API online");
 			}
@@ -112,67 +115,69 @@ public class TacoAPI extends TacoPlugin {
 		SerializationConfig.reload();
 		
 		getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+		commands = new CommandManager(plugin);
+		commands.reg(DevCommands.class);
 		startMetrics();
 	}
-
+	
 	@Override
 	public void onStop() {
 		chat.out("Disabled");
 	}
 	
-	public static ChatObject getChatAPI(){
+	public static ChatObject getChatAPI() {
 		return chatAPI;
 	}
 	
-	public static ChatUtils getChatUtils(){
+	public static ChatUtils getChatUtils() {
 		return chatUtils;
 	}
 	
-	public static Database getDB(){
+	public static Database getDB() {
 		return mysqlAPI;
 	}
 	
-	public static EconObject getEconAPI(){
+	public static EconObject getEconAPI() {
 		return econAPI;
 	}
 	
-	public static EffectObject getEffectAPI(){
+	public static EffectObject getEffectAPI() {
 		return effectAPI;
 	}
 	
-	public static ItemUtils getItemUtils(){
+	public static ItemUtils getItemUtils() {
 		return itemUtils;
 	}
 	
-	public static PermObject getPermAPI(){
+	public static PermObject getPermAPI() {
 		return permAPI;
 	}
 	
-	public static PlayerObject getPlayerAPI(){
+	public static PlayerObject getPlayerAPI() {
 		return playerAPI;
 	}
 	
-	public static TimeUtils getTimeUtils(){
+	public static TimeUtils getTimeUtils() {
 		return timeUtils;
 	}
 	
-	public static ServerObject getServerAPI(){
+	public static ServerObject getServerAPI() {
 		return serverAPI;
 	}
 	
-	public static WorldEditObject getWorldEditAPI(){
+	public static WorldEditObject getWorldEditAPI() {
 		return weAPI;
 	}
 	
-	public static boolean isItemMailInstalled(){
+	public static boolean isItemMailInstalled() {
 		return plugin.getServer().getPluginManager().getPlugin("ItemMail") != null;
 	}
 	
-	public static boolean isEconAPIOnline(){
+	public static boolean isEconAPIOnline() {
 		return econAPI != null;
 	}
 	
-	public static boolean isWorldEditAPIOnline(){
+	public static boolean isWorldEditAPIOnline() {
 		return weAPI != null;
 	}
 	

@@ -7,11 +7,9 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Command {
+public @interface SimpleCommand {
 	
 	String name();
-	
-	String[] aliases() default {};
 	
 	String args() default "";
 	
@@ -21,5 +19,4 @@ public @interface Command {
 	
 	boolean onlyConsole() default false;
 	
-	boolean invisible() default false; //whether the command can be seen in the help pages
 }

@@ -7,6 +7,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+
 import com.kill3rtaco.tacoapi.json.JSONArray;
 import com.kill3rtaco.tacoapi.json.JSONException;
 import com.kill3rtaco.tacoapi.json.JSONObject;
@@ -89,7 +90,7 @@ public class BookSerialization {
 			if(meta.hasAuthor())
 				root.put("author", meta.getAuthor());
 			if(meta.hasPages()) {
-				String[] pages = meta.getPages().toArray(new String[] {});
+				String[] pages = meta.getPages().toArray(new String[]{});
 				root.put("pages", pages);
 			}
 			return root;

@@ -13,11 +13,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
  *
  */
 public abstract class TacoConfig {
-
-	protected YamlConfiguration config;
-	private File file;
 	
-	public TacoConfig(File file){
+	protected YamlConfiguration	config;
+	private File				file;
+	
+	public TacoConfig(File file) {
 		this.file = file;
 		reload();
 	}
@@ -32,11 +32,11 @@ public abstract class TacoConfig {
 	 * @param path - The path in which the value is set
 	 * @param value - The value to set
 	 */
-	public void addDefaultValue(String path, Object value){
-		if(!config.contains(path)){
-			if(value instanceof String){
-				config.set(path, (String)value);
-			}else{
+	public void addDefaultValue(String path, Object value) {
+		if(!config.contains(path)) {
+			if(value instanceof String) {
+				config.set(path, (String) value);
+			} else {
 				config.set(path, value);
 			}
 		}
@@ -45,7 +45,7 @@ public abstract class TacoConfig {
 	/**
 	 * Reload the config values
 	 */
-	public void reload(){
+	public void reload() {
 		this.config = YamlConfiguration.loadConfiguration(file);
 		setDefaults();
 		save();
@@ -54,7 +54,7 @@ public abstract class TacoConfig {
 	/**
 	 * Saves the config file.
 	 */
-	public void save(){
+	public void save() {
 		try {
 			config.save(file);
 		} catch (IOException e) {
@@ -67,19 +67,19 @@ public abstract class TacoConfig {
 	 * @param path - The path which the String is taken from
 	 * @return The String found
 	 */
-	public String getString(String path){
+	public String getString(String path) {
 		return config.getString(path);
 	}
 	
-	public List<String> getStringList(String path){
+	public List<String> getStringList(String path) {
 		return config.getStringList(path);
 	}
 	
-	public double getDouble(String path){
+	public double getDouble(String path) {
 		return config.getDouble(path);
 	}
 	
-	public List<Double> getDoubleList(String path){
+	public List<Double> getDoubleList(String path) {
 		return config.getDoubleList(path);
 	}
 	
@@ -88,11 +88,11 @@ public abstract class TacoConfig {
 	 * @param path - The path which the int is taken from
 	 * @return The int found
 	 */
-	public int getInt(String path){
+	public int getInt(String path) {
 		return config.getInt(path);
 	}
 	
-	public List<Integer> getIntList(String path){
+	public List<Integer> getIntList(String path) {
 		return config.getIntegerList(path);
 	}
 	
@@ -101,44 +101,64 @@ public abstract class TacoConfig {
 	 * @param path - The path which the boolean is taken from
 	 * @return The boolean found
 	 */
-	public boolean getBoolean(String path){
+	public boolean getBoolean(String path) {
 		return config.getBoolean(path);
 	}
 	
-	public List<Boolean> getBooleanList(String path){
+	public List<Boolean> getBooleanList(String path) {
 		return config.getBooleanList(path);
 	}
 	
-	public void set(String path, Object value){
+	public void set(String path, Object value) {
 		config.set(path, value);
 		save();
 	}
 	
-	public void setBoolean(String path, boolean value){
-		config.set(path, value);
+	/**
+	 * @deprecated
+	 * @param path
+	 * @param value
+	 */
+	public void setBoolean(String path, boolean value) {
+		set(path, value);
 		save();
 	}
 	
-	public void setString(String path, String value){
-		config.set(path, value);
+	/**
+	 * @deprecated
+	 * @param path
+	 * @param value
+	 */
+	public void setString(String path, String value) {
+		set(path, value);
 		save();
 	}
 	
-	public void setInt(String path, int value){
-		config.set(path, value);
+	/**
+	 * @deprecated
+	 * @param path
+	 * @param value
+	 */
+	public void setInt(String path, int value) {
+		set(path, value);
 		save();
 	}
 	
-	public void setDouble(String path, double value){
-		config.set(path, value);
+	/**
+	 * @deprecated
+	 * @param path
+	 * @param value
+	 */
+	public void setDouble(String path, double value) {
+		set(path, value);
 		save();
 	}
 	
-	public boolean contains(String path){
+	public boolean contains(String path) {
 		return config.contains(path);
 	}
 	
-	public Map<String, Object> getMeta(){
+	public Map<String, Object> getMeta() {
 		return config.getValues(true);
 	}
 	
