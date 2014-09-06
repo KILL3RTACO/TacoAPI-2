@@ -13,8 +13,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.kill3rtaco.tacoapi.TacoAPI;
+import com.kill3rtaco.tacoapi.api.DisableManager;
 import com.kill3rtaco.tacoapi.api.TacoPermissionHandler;
 import com.kill3rtaco.tacoapi.util.ChatUtils;
 import com.kill3rtaco.tacoapi.util.PageBuilder;
@@ -31,10 +33,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 	private ArrayList<String>					_registeredCommands	= new ArrayList<String>();
 	private ArrayList<TacoPermissionHandler>	_permHandlers		= new ArrayList<TacoPermissionHandler>();
 	private HashMap<String, PageBuilder>		_help				= new HashMap<String, PageBuilder>();
-	private ArrayList<TabCompleteHook>			_tcHooks;
+	private DisableManager						_dm;
 	
 	public CommandManager(JavaPlugin plugin) {
+		this(plugin, null);
+	}
+	
+	public CommandManager(JavaPlugin plugin, DisableManager dm) {
 		_plugin = plugin;
+		_dm = dm;
 	}
 	
 	/**
@@ -138,7 +145,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		//special case - true if subcommand is an integer
-		if(name.equalsIgnoreCase("#") || name.equalsIgnoreCase("[#]") || name.equalsIgnoreCase("<#>")) {
+		if((name.equals("#") || name.equals("[#]") || name.equals("<#>")) && !alias.equals("-")) {
 			try {
 				Integer.parseInt(alias);
 				return true;
@@ -168,7 +175,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 		}
 		String command = args.length > 0 ? args[0] : "";
 		String[] newArgs = removeFirstArg(args);
-		for(Method m : getMethodsFor(cmd.getName())) {
+		for(final Method m : getMethodsFor(cmd.getName())) {
 			boolean simple = m.isAnnotationPresent(SimpleCommand.class);
 			boolean onlyConsole, onlyPlayer;
 			String name;
@@ -203,8 +210,31 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 						player.sendMessage(msg);
 						return true;
 					}
-					CommandContext cargs = simple ? new CommandContext(sender, cmd.getName(), args) : new CommandContext(sender, command, newArgs);
-					m.invoke(null, cargs);
+					final CommandContext cargs = simple ? new CommandContext(sender, cmd.getName(), args) : new CommandContext(sender, command, newArgs);
+					if(_dm != null && m.isAnnotationPresent(DisableKeys.class)) {
+						String[] keys = m.getAnnotation(DisableKeys.class).value();
+						if(keys.length > 0) {
+							if(_dm.isDisabled(sender, keys[0], keys)) {
+								return true;
+							}
+						}
+					}
+					if(m.isAnnotationPresent(AsyncCommand.class)) {
+						new BukkitRunnable() {
+							
+							@Override
+							public void run() {
+								
+								try {
+									m.invoke(null, cargs);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}.runTaskAsynchronously(_plugin);
+					} else {
+						m.invoke(null, cargs);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -271,6 +301,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 		if(pages == null) {
 			pages = new PageBuilder("&b/" + label + " Help", "&3");
 			ArrayList<Method> methods = getMethodsFor(label);
+			String legend = "&6KEY&7: &2<> &7- &arequired &7| &2[] &7- &aoptional &7| &2/ &7- &aor";
+			pages.setSubtitle(legend);
 			String helpLine = "&b/" + label + " &3help&b/&3? [page]&7: &bShows help";
 			pages.append(helpLine);
 			for(Method m : methods) {
@@ -354,45 +386,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 		return _methods.size();
 	}
 	
-	/**
-	 * Add a TabComplete hook. This is a useful method to provide automatic tab completion depending on the
-	 * arguments index.
-	 * @param parent The parent command (begins with "/")
-	 * @param sub The subcommand (empty or null if the command is a SimpleCommand)
-	 * @param index The index that the list applies to
-	 * @param list A list of all possible strings. The {@link TabCompletionLists} class provides some for you.
-	 */
-	public void addTabCompleteHook(String parent, String sub, int index, List<String> list) {
-		_tcHooks.add(new TabCompleteHook(parent, sub, index, list));
-	}
-	
-	class TabCompleteHook {
-		
-		private String			_parent, _sub;
-		private int				_index;
-		private List<String>	_list;
-		
-		public TabCompleteHook(String parent, String sub, int index, List<String> list) {
-			_parent = parent;
-			_sub = sub;
-			_index = index;
-			_list = list;
-		}
-		
-		public String getParent() {
-			return _parent;
-		}
-		
-		public String getSub() {
-			return _sub;
-		}
-		
-		public int getArgIndex() {
-			return _index;
-		}
-		
-		public List<String> getList() {
-			return _list;
-		}
+	public static String unknownCommandMessage(String label, String sub) {
+		return "&cCommand \"&e/" + label + " " + sub + "&c\" not found";
 	}
 }

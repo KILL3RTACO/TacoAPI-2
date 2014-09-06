@@ -3,30 +3,26 @@ package com.kill3rtaco.tacoapi.obj;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.DisallowedItemException;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.EmptyClipboardException;
 import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.InvalidItemException;
 import com.sk89q.worldedit.LocalConfiguration;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.UnknownItemException;
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.WorldVector;
 import com.sk89q.worldedit.bags.BlockBag;
 import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.blocks.BlockType;
-import com.sk89q.worldedit.blocks.ClothColor;
-import com.sk89q.worldedit.blocks.NoteBlock;
-import com.sk89q.worldedit.blocks.SignBlock;
+import com.sk89q.worldedit.bukkit.BukkitCommandSender;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -117,8 +113,21 @@ public class WorldEditObject {
 		}
 	}
 	
-	public BaseBlock getBlock(String id) throws UnknownItemException, DisallowedItemException {
-		return we.getWorldEdit().getBlock(null, id);
+	public BaseBlock getBlock(String id, final String world) throws WorldEditException {
+		return getBlock(id, getLocalWorld(world));
+	}
+	
+	public BaseBlock getBlock(String id, final LocalWorld world) throws WorldEditException {
+		if(world == null)
+			throw new IllegalArgumentException("world cannot be null");
+		return we.getWorldEdit().getBlock(new BukkitCommandSender(we, we.getServerInterface(), Bukkit.getConsoleSender()) {
+			
+			@Override
+			public LocalWorld getWorld() {
+				return world;
+			}
+			
+		}, id, true);
 	}
 	
 	public Selection getSelection(Player player) {
@@ -152,151 +161,6 @@ public class WorldEditObject {
 		format.save(clipboard, f);
 	}
 	
-	@Deprecated
-	public BaseBlock getBlock(String arg, LocalWorld world) throws UnknownItemException, DisallowedItemException {
-		
-		BlockType blockType;
-		arg = arg.replace("_", " ");
-		arg = arg.replace(";", "|");
-		String[] blockAndExtraData = arg.split("\\|");
-		String[] typeAndData = blockAndExtraData[0].split(":", 2);
-		String testID = typeAndData[0];
-		int blockId = -1;
-		
-		int data = -1;
-		
-		// Attempt to parse the item ID or otherwise resolve an item/block
-		// name to its numeric ID
-		try {
-			blockId = Integer.parseInt(testID);
-			blockType = BlockType.fromID(blockId);
-		} catch (NumberFormatException e) {
-			blockType = BlockType.lookup(testID);
-			if(blockType == null) {
-				
-			}
-		}
-		
-		if((blockId == -1) && (blockType == null)) {
-			// Maybe it's a cloth
-			ClothColor col = ClothColor.lookup(testID);
-			
-			if(col != null) {
-				blockType = BlockType.CLOTH;
-				data = col.getID();
-			} else {
-				throw new UnknownItemException(arg);
-			}
-		}
-		
-		// Read block ID
-		if(blockId == -1) {
-			blockId = blockType.getID();
-		}
-		
-		if(!world.isValidBlockType(blockId)) {
-			throw new UnknownItemException(arg);
-		}
-		
-		if(data == -1) { // Block data not yet detected
-			// Parse the block data (optional)
-			try {
-				data = typeAndData.length > 1 ? Integer.parseInt(typeAndData[1]) : 0;
-				if((data > 15) || ((data < 0) && !(data == -1))) {
-					data = 0;
-				}
-			} catch (NumberFormatException e) {
-				if(blockType != null) {
-					switch(blockType) {
-						case CLOTH:
-							ClothColor col = ClothColor.lookup(typeAndData[1]);
-							
-							if(col != null) {
-								data = col.getID();
-							} else {
-								throw new InvalidItemException(arg, "Unknown cloth color '" + typeAndData[1] + "'");
-							}
-							break;
-						
-						case STEP:
-						case DOUBLE_STEP:
-							BlockType dataType = BlockType.lookup(typeAndData[1]);
-							
-							if(dataType != null) {
-								switch(dataType) {
-									case STONE:
-										data = 0;
-										break;
-									
-									case SANDSTONE:
-										data = 1;
-										break;
-									
-									case WOOD:
-										data = 2;
-										break;
-									
-									case COBBLESTONE:
-										data = 3;
-										break;
-									case BRICK:
-										data = 4;
-										break;
-									case STONE_BRICK:
-										data = 5;
-										
-									default:
-										throw new InvalidItemException(arg, "Invalid step type '" + typeAndData[1] + "'");
-								}
-							} else {
-								throw new InvalidItemException(arg, "Unknown step type '" + typeAndData[1] + "'");
-							}
-							break;
-						
-						default:
-							throw new InvalidItemException(arg, "Unknown data value '" + typeAndData[1] + "'");
-					}
-				} else {
-					throw new InvalidItemException(arg, "Unknown data value '" + typeAndData[1] + "'");
-				}
-			}
-		}
-		
-		// Check if the item is allowed
-		if(blockType != null) {
-			switch(blockType) {
-				case SIGN_POST:
-				case WALL_SIGN:
-					// Allow special sign text syntax
-					String[] text = new String[4];
-					text[0] = blockAndExtraData.length > 1 ? blockAndExtraData[1] : "";
-					text[1] = blockAndExtraData.length > 2 ? blockAndExtraData[2] : "";
-					text[2] = blockAndExtraData.length > 3 ? blockAndExtraData[3] : "";
-					text[3] = blockAndExtraData.length > 4 ? blockAndExtraData[4] : "";
-					return new SignBlock(blockType.getID(), data, text);
-					
-				case MOB_SPAWNER:
-					
-				case NOTE_BLOCK:
-					if(blockAndExtraData.length > 1) {
-						byte note = Byte.parseByte(blockAndExtraData[1]);
-						if((note < 0) || (note > 24)) {
-							throw new InvalidItemException(arg, "Out of range note value: '" + blockAndExtraData[1] + "'");
-						} else {
-							return new NoteBlock(data, note);
-						}
-					} else {
-						return new NoteBlock(data, (byte) 0);
-					}
-					
-				default:
-					return new BaseBlock(blockId, data);
-			}
-		} else {
-			return new BaseBlock(blockId, data);
-		}
-	}
-	
 	public int setAreaWithBlock(String world, Location minPoint, Location maxPoint, String blockId) {
 		LocalSession session = this.getLocalSession();
 		RegionSelector selector = session.getRegionSelector(getLocalWorld(world));
@@ -305,10 +169,8 @@ public class WorldEditObject {
 		EditSession editSession = new EditSession(getLocalWorld(world), -1);
 		Pattern pattern = null;
 		try {
-			pattern = new SingleBlockPattern(getBlock(blockId));
-		} catch (UnknownItemException e) {
-			e.printStackTrace();
-		} catch (DisallowedItemException e) {
+			pattern = new SingleBlockPattern(getBlock(blockId, editSession.getWorld()));
+		} catch (WorldEditException e) {
 			e.printStackTrace();
 		}
 		int affected = -1;

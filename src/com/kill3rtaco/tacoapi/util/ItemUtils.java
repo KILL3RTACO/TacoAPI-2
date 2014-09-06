@@ -1,24 +1,31 @@
 package com.kill3rtaco.tacoapi.util;
 
+import java.util.Map;
+
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 import com.kill3rtaco.tacoapi.TacoAPI;
-
+import com.kill3rtaco.tacoapi.api.serialization.EnchantmentSerialization;
+import com.kill3rtaco.tacoapi.api.serialization.SingleItemSerialization;
+import com.kill3rtaco.tacoapi.json.JSONException;
+import com.kill3rtaco.tacoapi.json.JSONObject;
 
 /**
  * A class that helps with item handling, mainly used for ItemMail.
  * @author KILL3RTACO
  *
  */
-public class ItemUtils {
 
+@SuppressWarnings("deprecation")
+public class ItemUtils {
 	
 	/**
 	 * An enum holding extra names that can be used as aliases for creating an ItemStack.
 	 */
 	//One of the only times I will break my convention of not using internal classes/enums/interfaces
-	public enum DisplayName{
+	public enum DisplayName {
 		
 		OAK_PLANK(5, 0),
 		SPRUCE_PLANK(5, 1, "pine_plank", "spruce_plank"),
@@ -43,7 +50,7 @@ public class ItemUtils {
 		YELLOW_WOOL(35, 4, "yellow"),
 		LIME_GREEN_WOOL(35, 5, "light_green_wool", "light_green", "lime_green"),
 		PINK_WOOL(35, 6, "pink", "lightish_red"),
-		GRAY_WOOL(35, 7, "grey_wool", "grey",  "gray_wool", "gray"),
+		GRAY_WOOL(35, 7, "grey_wool", "grey", "gray_wool", "gray"),
 		LIGHT_GRAY_WOOL(35, 8, "light_grey_wool", "light_grey", "light_gray"),
 		CYAN_WOOL(35, 9, "cyan"),
 		PURPLE_WOOL(35, 10, "purple"),
@@ -52,15 +59,34 @@ public class ItemUtils {
 		GREEN_WOOL(35, 13, "green"),
 		RED_WOOL(35, 14, "red"),
 		BLACK_WOOL(35, 15, "black"),
+		WHITE_STAINED_GLASS(95, 0, "white_glass"),
+		ORANGE_STAINED_GLASS(95, 1, "orange_glass"),
+		MAGENTA_STAINED_GLASS(95, 2, "magenta_glass"),
+		LIGHT_BLUE_STAINED_GLASS(95, 3, "light_blue_glass"),
+		YELLOW_STAINED_GLASS(95, 4, "yellow_glass"),
+		LIME_GREEN_STAINED_GLASS(95, 5, "light_green_glass"),
+		PINK_STAINED_GLASS(95, 6, "pink_glass"),
+		GRAY_STAINED_GLASS(95, 7, "grey_glass"),
+		LIGHT_GRAY_STAINED_GLASS(95, 8, "light_grey_glass"),
+		CYAN_STAINED_GLASS(95, 9, "cyan_glass"),
+		PURPLE_STAINED_GLASS(95, 10, "purple_glass"),
+		BLUE_STAINED_GLASS(95, 11, "blue_glass"),
+		BROWN_STAINED_GLASS(95, 12, "brown_glass"),
+		GREEN_STAINED_GLASS(95, 13, "green_glass"),
+		RED_STAINED_GLASS(95, 14, "red_glass"),
+		BLACK_STAINED_GLASS(95, 15, "black_glass"),
 		WHITE_STAINED_CLAY(159, 0, "white_clay"),
 		ORANGE_STAINED_CLAY(159, 1, "orange_clay"),
 		MAGENTA_STAINED_CLAY(159, 2, "magenta_clay"),
 		LIGHT_BLUE_STAINED_CLAY(159, 3, "light_blue_clay"),
 		YELLOW_STAINED_CLAY(159, 4, "yellow_clay"),
-		LIME_GREEN_STAINED_CLAY(159, 5, "light_green_stained_clay", "light_green_clay", "lime_green_clay", "lime_stained_clay", "lime_clay"),
+		LIME_GREEN_STAINED_CLAY(159, 5, "light_green_stained_clay",
+				"light_green_clay", "lime_green_clay", "lime_stained_clay",
+				"lime_clay"),
 		PINK_STAINED_CLAY(159, 6, "pink_clay"),
 		GRAY_STAINED_CLAY(159, 7, "gray_clay", "grey_stained_clay", "grey_clay"),
-		LIGHT_GRAY_STAINED_CLAY(159, 8, "light_gray_clay", "grey_stained_clay", "grey_clay"),
+		LIGHT_GRAY_STAINED_CLAY(159, 8, "light_gray_clay", "grey_stained_clay",
+				"grey_clay"),
 		CYAN_STAINED_CLAY(159, 9, "cyan_clay"),
 		PURPLE_STAINED_CLAY(159, 10, "purple_clay"),
 		BLUE_STAINED_CLAY(159, 11, "blue_clay"),
@@ -109,13 +135,15 @@ public class ItemUtils {
 		ZOMBIE_SPAWN_EGG(383, 54, "spawn_zombie"),
 		SLIME_SPAWN_EGG(383, 55, "spawn_slime"),
 		GHAST_SPAWN_EGG(383, 56, "spawn_ghast"),
-		ZOMBIE_PIGMAN_SPAWN_EGG(383, 57, "pigzombie_spawn_egg", "spawn_pigzombie", "spawn_zombie_pigman"),
+		ZOMBIE_PIGMAN_SPAWN_EGG(383, 57, "pigzombie_spawn_egg",
+				"spawn_pigzombie", "spawn_zombie_pigman"),
 		ENDERMAN_SPAWN_EGG(383, 58, "spawn_enderman"),
 		CAVE_SPIDER_SPAWN_EGG(383, 59, "spawn_cave_spider"),
 		SILVERFISH_SPAWN_EGG(383, 60, "spawn_silverfish"),
 		BLAZE_SPAWN_EGG(383, 61, "spawn_blaze"),
 		MAGMA_CUBE_SPAWN_EGG(383, 62, "spawn_magma_cube"),
-		ENDER_DRAGON_SPAWN_EGG(383, 63, "enderdragon_spawn_egg", "spawn_enderdragon", "spawn_ender_dragon"),
+		ENDER_DRAGON_SPAWN_EGG(383, 63, "enderdragon_spawn_egg",
+				"spawn_enderdragon", "spawn_ender_dragon"),
 		WITHER_SPAWN_EGG(383, 64, "spawn_wither"),
 		BAT_SPAWN_EGG(383, 65, "spawn_bat"),
 		WITCH_SPAWN_EGG(383, 66, "spawn_witch"),
@@ -137,10 +165,10 @@ public class ItemUtils {
 		HUMAN_HEAD(383, 3, "steve_head"),
 		CREEPER_HEAD(383, 4);
 		
-		private int id, damage;
-		private String[] aliases;
+		private int			id, damage;
+		private String[]	aliases;
 		
-		private DisplayName(int id, int damage, String... aliases){
+		private DisplayName(int id, int damage, String... aliases) {
 			this.id = id;
 			this.damage = damage;
 			this.aliases = aliases;
@@ -151,14 +179,16 @@ public class ItemUtils {
 		 * @param alias The alias to test
 		 * @return true if this has the alias given.
 		 */
-		public boolean hasAlias(String alias){
-			if(name().equalsIgnoreCase(alias)) return true;
+		public boolean hasAlias(String alias) {
+			if(name().equalsIgnoreCase(alias))
+				return true;
 			for(String s : aliases)
-				if(s.equalsIgnoreCase(alias)) return true;
+				if(s.equalsIgnoreCase(alias))
+					return true;
 			return false;
 		}
 		
-		public String getName(){
+		public String getName() {
 			return TacoAPI.getChatUtils().toProperCase(name().replaceAll("_", " "));
 		}
 		
@@ -166,7 +196,7 @@ public class ItemUtils {
 		 * Gets the id for this DisplayName
 		 * @return The id value
 		 */
-		public int getId(){
+		public int getId() {
 			return id;
 		}
 		
@@ -174,7 +204,7 @@ public class ItemUtils {
 		 * Gets the damage value for this DisplayName
 		 * @return The damage value
 		 */
-		public int getDamage(){
+		public int getDamage() {
 			return damage;
 		}
 		
@@ -183,15 +213,17 @@ public class ItemUtils {
 		 * @param name the alias to use
 		 * @return The DisplayName found, if exists.
 		 */
-		public static DisplayName getDisplayName(String name){
+		public static DisplayName getDisplayName(String name) {
 			for(DisplayName dn : DisplayName.values())
-				if(dn.hasAlias(name)) return dn;
+				if(dn.hasAlias(name))
+					return dn;
 			return null;
 		}
 		
-		public static DisplayName getDisplayName(int id, int damage){
+		public static DisplayName getDisplayName(int id, int damage) {
 			for(DisplayName dn : DisplayName.values())
-				if(dn.getId() == id && dn.getDamage() == damage) return dn;
+				if(dn.getId() == id && dn.getDamage() == damage)
+					return dn;
 			return null;
 		}
 		
@@ -221,27 +253,89 @@ public class ItemUtils {
 		FLAME(50),
 		INFINITY(51);
 		
-		private int id;
+		private int	id;
 		
-		private EnchantDisplayName(int id){
+		private EnchantDisplayName(int id) {
 			this.id = id;
 		}
 		
-		public int getId(){
+		public int getId() {
 			return id;
 		}
 		
-		public String getName(){
+		public String getName() {
 			return TacoAPI.getChatUtils().toProperCase(name().replace("_", " "));
 		}
 		
-		public static EnchantDisplayName getDisplayName(int id){
-			for(EnchantDisplayName name : EnchantDisplayName.values()){
-				if(id == name.getId()) return name;
+		public static EnchantDisplayName getDisplayName(int id) {
+			for(EnchantDisplayName name : EnchantDisplayName.values()) {
+				if(id == name.getId())
+					return name;
 			}
 			return null;
 		}
 		
+	}
+	
+	public String enchantmentDisplay(String enchantString) {
+		Map<Enchantment, Integer> enchants = EnchantmentSerialization.getEnchantments(enchantString);
+		String display = "";
+		for(Enchantment e : enchants.keySet()) {
+			display += EnchantDisplayName.getDisplayName(e.getId()) + " " + romanNumeral(enchants.get(e)) + ", ";
+		}
+		return display.substring(0, display.length() - 2);
+	}
+	
+	private String romanNumeral(int num) {
+		switch(num) {
+			default:
+			case 1:
+				return "I";
+			case 2:
+				return "II";
+			case 3:
+				return "III";
+			case 4:
+				return "IV";
+			case 5:
+				return "V";
+				
+		}
+	}
+	
+	public String display(ItemStack items) {
+		return display(items, true);
+	}
+	
+	public String display(ItemStack items, boolean addItalics) {
+		return display(items, addItalics, true);
+	}
+	
+	//check if named book, or named item
+	public String display(ItemStack items, boolean addItalics, boolean customName) {
+		try {
+			if(customName) {
+				JSONObject json = SingleItemSerialization.serializeItem(items);
+				//check if titled book
+				String pre = (addItalics ? "&o" : "");
+				if(json.has("book-meta")) {
+					JSONObject meta = json.getJSONObject("book-meta");
+					if(meta.has("title"))
+						return pre + json.getJSONObject("book-meta").getString("title");
+					if(meta.has("enchantments"))
+						return pre + enchantmentDisplay(meta.getString("enchantments"));
+				} else if(json.has("name")) {
+					return pre + json.getString("name");
+				}
+			}
+			DisplayName dn = DisplayName.getDisplayName(items.getTypeId(), items.getDurability());
+			if(dn != null)
+				return dn.getName();
+			return TacoAPI.getChatUtils().toProperCase(items.getType().name().replace("_", " "));
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/**
@@ -250,29 +344,30 @@ public class ItemUtils {
 	 * @param amount The amount of the item to make.
 	 * @return The ItemStack created, if created. Otherwise null.
 	 */
-	public ItemStack createItemStack(String name, int amount){
+	public ItemStack createItemStack(String name, int amount) {
 		short damage = 0;
 		String alias;
-		if(name.contains(":")){
+		if(name.contains(":")) {
 			String[] split = name.split(":");
 			alias = split[0];
-			if(TacoAPI.getChatUtils().isNum(split[1])){
+			if(TacoAPI.getChatUtils().isNum(split[1])) {
 				damage = (short) Integer.parseInt(split[1]);
 			}
-		}else{
+		} else {
 			alias = name;
 		}
 		Material mat = getMaterial(alias);
-		if(mat == null){
+		if(mat == null) {
 			DisplayName dn = DisplayName.getDisplayName(alias);
-			if(dn == null) return null;
+			if(dn == null)
+				return null;
 			return new ItemStack(dn.getId(), amount, (short) dn.getDamage()); //extra damage at the end of the string will not be applied
-		}else{
-			return new ItemStack(mat, amount, (short) damage);
+		} else {
+			return new ItemStack(mat, amount, damage);
 		}
 	}
 	
-	public Material getMaterial(String material){
+	public Material getMaterial(String material) {
 		if(TacoAPI.getChatUtils().isNum(material))
 			return Material.getMaterial(Integer.parseInt(material));
 		else
@@ -284,86 +379,87 @@ public class ItemUtils {
 	 * @param name The alias to use.
 	 * @return true if the DisplayName exists
 	 */
-	public boolean displayNameExists(String name){
+	public boolean displayNameExists(String name) {
 		for(DisplayName dn : DisplayName.values())
-			if(dn.hasAlias(name)) return true;
+			if(dn.hasAlias(name))
+				return true;
 		return false;
 	}
 	
-	public boolean isHelmet(Material material){
+	public boolean isHelmet(Material material) {
 		return material == Material.LEATHER_HELMET || material == Material.GOLD_HELMET || material == Material.IRON_HELMET ||
 				material == Material.CHAINMAIL_HELMET || material == Material.DIAMOND_HELMET;
 	}
 	
-	public boolean isChestPlate(Material material){
+	public boolean isChestPlate(Material material) {
 		return material == Material.LEATHER_CHESTPLATE || material == Material.GOLD_CHESTPLATE || material == Material.IRON_CHESTPLATE ||
 				material == Material.CHAINMAIL_CHESTPLATE || material == Material.DIAMOND_CHESTPLATE;
 	}
 	
-	public boolean isLegging(Material material){
+	public boolean isLegging(Material material) {
 		return material == Material.LEATHER_LEGGINGS || material == Material.GOLD_LEGGINGS || material == Material.IRON_LEGGINGS ||
 				material == Material.CHAINMAIL_LEGGINGS || material == Material.DIAMOND_LEGGINGS;
 	}
 	
-	public boolean isBoot(Material material){
+	public boolean isBoot(Material material) {
 		return material == Material.LEATHER_BOOTS || material == Material.GOLD_BOOTS || material == Material.IRON_BOOTS ||
 				material == Material.CHAINMAIL_BOOTS || material == Material.DIAMOND_BOOTS;
 	}
 	
-	public boolean isArmor(Material material){
+	public boolean isArmor(Material material) {
 		return isHelmet(material) || isChestPlate(material) || isLegging(material) || isBoot(material);
 	}
 	
-	public boolean isLeatherArmor(Material material){
-		return material == Material.LEATHER_HELMET || material == Material.LEATHER_CHESTPLATE || 
+	public boolean isLeatherArmor(Material material) {
+		return material == Material.LEATHER_HELMET || material == Material.LEATHER_CHESTPLATE ||
 				material == Material.LEATHER_LEGGINGS || material == Material.LEATHER_BOOTS;
 	}
 	
-	public boolean isGoldArmor(Material material){
-		return material == Material.GOLD_HELMET || material == Material.GOLD_CHESTPLATE || 
+	public boolean isGoldArmor(Material material) {
+		return material == Material.GOLD_HELMET || material == Material.GOLD_CHESTPLATE ||
 				material == Material.GOLD_LEGGINGS || material == Material.GOLD_BOOTS;
 	}
 	
-	public boolean isIronArmor(Material material){
-		return material == Material.IRON_HELMET || material == Material.IRON_CHESTPLATE || 
+	public boolean isIronArmor(Material material) {
+		return material == Material.IRON_HELMET || material == Material.IRON_CHESTPLATE ||
 				material == Material.IRON_LEGGINGS || material == Material.IRON_BOOTS;
 	}
 	
-	public boolean isChainMailArmor(Material material){
-		return material == Material.CHAINMAIL_HELMET || material == Material.CHAINMAIL_CHESTPLATE || 
+	public boolean isChainMailArmor(Material material) {
+		return material == Material.CHAINMAIL_HELMET || material == Material.CHAINMAIL_CHESTPLATE ||
 				material == Material.CHAINMAIL_LEGGINGS || material == Material.CHAINMAIL_BOOTS;
 	}
 	
-	public boolean isDiamondArmor(Material material){
-		return material == Material.DIAMOND_HELMET || material == Material.DIAMOND_CHESTPLATE || 
+	public boolean isDiamondArmor(Material material) {
+		return material == Material.DIAMOND_HELMET || material == Material.DIAMOND_CHESTPLATE ||
 				material == Material.DIAMOND_LEGGINGS || material == Material.DIAMOND_BOOTS;
 	}
 	
-	public boolean isPickaxe(Material material){
+	public boolean isPickaxe(Material material) {
 		return material == Material.WOOD_PICKAXE || material == Material.GOLD_PICKAXE || material == Material.IRON_PICKAXE || material == Material.DIAMOND_PICKAXE;
 	}
 	
-	public boolean isAxe(Material material){
+	public boolean isAxe(Material material) {
 		return material == Material.WOOD_AXE || material == Material.GOLD_AXE || material == Material.IRON_AXE || material == Material.DIAMOND_AXE;
 	}
 	
-	public boolean isShovel(Material material){
+	public boolean isShovel(Material material) {
 		return material == Material.WOOD_SPADE || material == Material.GOLD_SPADE || material == Material.IRON_SPADE || material == Material.DIAMOND_SPADE;
 	}
 	
-	public boolean isHoe(Material material){ //no u da ho
+	public boolean isHoe(Material material) { //no u da ho
 		return material == Material.WOOD_HOE || material == Material.GOLD_HOE || material == Material.IRON_HOE || material == Material.DIAMOND_HOE;
 	}
 	
-	public boolean isTool(Material material){
+	public boolean isTool(Material material) {
 		return isPickaxe(material) || isAxe(material) || isShovel(material) || isHoe(material) || material == Material.SHEARS;
 	}
 	
-	public boolean isSword(Material material){
+	public boolean isSword(Material material) {
 		return material == Material.WOOD_SWORD || material == Material.GOLD_SWORD || material == Material.IRON_SWORD || material == Material.DIAMOND_SWORD;
 	}
 	
-	public boolean isWeapon(Material material){
+	public boolean isWeapon(Material material) {
 		return isSword(material) || material == Material.BOW;
 	}
 	

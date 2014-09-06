@@ -115,7 +115,7 @@ public abstract class TacoConfig {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated use set
 	 * @param path
 	 * @param value
 	 */
@@ -125,7 +125,7 @@ public abstract class TacoConfig {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated use set
 	 * @param path
 	 * @param value
 	 */
@@ -135,7 +135,7 @@ public abstract class TacoConfig {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated use set
 	 * @param path
 	 * @param value
 	 */
@@ -145,7 +145,7 @@ public abstract class TacoConfig {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated use set
 	 * @param path
 	 * @param value
 	 */

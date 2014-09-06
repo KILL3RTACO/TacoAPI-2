@@ -63,6 +63,10 @@ public class CommandContext {
 		}
 	}
 	
+	public String[] getArgs(int start) {
+		return TacoAPI.getChatUtils().removeArgs(_args, start);
+	}
+	
 	/**
 	 * Returns a player object from the String at {@code index}. This yields exactly the same result as
 	 * {@code Bukkit.getPlayer(context.getString(index))}
@@ -124,10 +128,6 @@ public class CommandContext {
 	 */
 	public String[] getArgs() {
 		return _args;
-	}
-	
-	public String[] getArgs(int beginIndex) {
-		return TacoAPI.getChatUtils().removeArgs(_args, beginIndex);
 	}
 	
 	/**
@@ -228,14 +228,7 @@ public class CommandContext {
 	}
 	
 	public String getPlayerName() {
-		if(senderIsPlayer())
-			return getPlayer().getName();
-		else
-			return "CONSOLE";
-	}
-	
-	public void invokeCommand(String command) {
-		_sender.getServer().dispatchCommand(_sender, command);
+		return getPlayer().getName();
 	}
 	
 	public boolean senderHasPermission(String perm) {
